@@ -164,6 +164,77 @@ visualization *is* the product. But correctness still outranks polish.
 
 ---
 
+## Modular Architecture: Components Are Data, Not Code
+
+The rule that keeps the codebase lean. **Binding for all implementation
+work.**
+
+### The trait interface
+
+Every optical element reduces to the same four mathematical objects:
+
+```text
+abcd(params)         -> 2x2 real matrix     (beam transformation of q)
+jones(params)        -> 2x2 complex matrix  (polarization transformation)
+transmission(params) -> scalar in [0, 1]    (power throughput)
+aperture(params)     -> clear aperture      (does the beam fit?)
+```
+
+An element definition is a small **declarative registry entry** mapping
+parameters to those four traits, plus its stated assumptions:
+
+```text
+register("thin_lens", {
+  params: { f: mm, diameter: mm, T: unitless },
+  abcd: ({ f }) => [[1, 0], [-1 / f, 1]],
+  jones: () => IDENTITY,
+  transmission: ({ T }) => T,
+  aperture: ({ diameter }) => diameter,
+  assumes: ["thin-lens", "paraxial"],
+})
+```
+
+Elements contain **no propagation logic — ever.** A new element type is a
+registry entry (~10 lines of data), never a new module of physics code.
+
+### One generic engine
+
+`propagate()` is a single fold over the element list: each element
+contributes its ABCD matrix to q, its Jones matrix to the polarization
+state, its transmission to power, plus an aperture check. The beam state is
+`{ q, jones vector, power, wavelength, z }`. The engine never knows what a
+"lens" is.
+
+Measurements are pure functions of beam state. `sweep()` and `optimize()`
+are generic higher-order wrappers around `propagate()`. Compound elements
+(thick lens, beam expander) are lists of primitives — composition is free
+because matrices multiply.
+
+### The bench schema is the single contract
+
+One typed, serializable bench description (elements, positions,
+parameters). The agent mutates it through tools, the UI renders and edits
+it, the engine consumes it. No other coupling between agent, UI, and
+physics is permitted.
+
+### Extension costs (keep them this low)
+
+| Addition                          | What you write                        | Engine changes |
+| --------------------------------- | ------------------------------------- | -------------- |
+| New element (prism, filter)       | one registry entry                    | none           |
+| Compound element (beam expander)  | a list of primitives                  | none           |
+| New measurement (waist, η)        | one function: BeamState → number      | none           |
+| Real SKUs (v4)                    | registry entry + vendor provenance    | none           |
+| Wave optics (later)               | one new optional trait: t(x, y) mask  | one new mode   |
+
+### Why this also serves correctness
+
+Property tests bind to the trait interface once and cover every element
+forever: unitarity for every `jones()` of a lossless element, det = 1 for
+every `abcd()`, power never increasing through any `transmission()`.
+
+---
+
 ## Physics Kernel
 
 A deterministic, unit-tested library. The LLM never does arithmetic the
@@ -266,11 +337,13 @@ Frontend / bench UI:
     React + TypeScript; SVG or canvas for the bench; a plotting lib for sweeps
 
 Physics kernel:
-    Python (NumPy/SciPy) behind FastAPI
-    — OR TypeScript in-browser for the v1 Gaussian/Jones/ABCD math
-      (it is simple enough), with Python reserved for FFT wave optics.
-    Decide once, early, based on interactivity; do not maintain two kernels
-    of the same physics.
+    DECIDED: TypeScript, in-browser, as a pure framework-free package
+    (`packages/kernel`). Rationale: v1 math (Gaussian/Jones/ABCD/overlap)
+    is closed-form and trivial for JS numerics; live drag-to-recompute
+    requires in-browser speed; one language across kernel/UI/agent tools
+    keeps the repo lean. FFT wave optics later may be a separate Python
+    or WASM service — it must NOT duplicate the v1 kernel's physics.
+    Do not maintain two kernels of the same physics.
 
 Schemas / bench state:
     Typed, serializable bench description (elements, positions, parameters)
