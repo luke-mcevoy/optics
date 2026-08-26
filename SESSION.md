@@ -32,3 +32,33 @@ The project spec is `AGENTS.md` — it is binding.
   suite before building anything on top.
 - After kernel: bench schema + registry + propagate fold, then tools API,
   then UI.
+
+## 2026-08-26 — Claude Code (workstream 1, attempt 1 — blocked, design only)
+
+**Blocked:** headless run had no filesystem write permission; no files
+created. Fixed afterwards by adding `.claude/settings.json` with allow
+rules (Write/Edit/Bash for npm, git, node, etc.).
+
+**Design decisions to carry into the implementation (binding unless a
+good reason emerges):**
+- **Units:** one branded type per *dimension*, stored SI internally
+  (`Length` in m, `Power` in W, `Angle` in rad), unit-named constructors
+  (`nm`, `mm`, `deg`) and readers (`toMm`, `toDeg`). Do NOT brand per
+  unit (Mm vs Nm) — poisons internal arithmetic. Cross-dimension mixing
+  stays a type error.
+- **q-convention:** `1/q = 1/R − i·λ₀·M²/(π·n·w²)` (vacuum λ₀, local
+  index n, M² folded in), with *unreduced* ABCD matrices. Flat interface
+  `[[1,0],[0,n₁/n₂]]` then gives q′ = q·n₂/n₁ (w unchanged) — correct.
+  Consequence: `w₀·θ = M²λ₀/(nπ)`, so the beam-quality property test is
+  `w₀θ ≥ M²λ₀/(nπ)` (or restrict to n = 1), NOT `λ/π` blindly.
+- **Coupling closed form** (exact for paraxial Gaussians at a common
+  plane, arbitrary complex q, lateral offset x₀, tilt θ; k = 2πn/λ₀):
+  `η = η₀ · exp(2·Re[b²/(4A) − i·k·x₀²/(2q₁)])` with
+  `η₀ = 4·Im(1/q₁)·Im(1/q₂)/|1/q₁ − conj(1/q₂)|²`,
+  `A = i·k/2·(1/q₁ − conj(1/q₂))`, `b = i·k·(x₀/q₁ + θ)`.
+  Golden tests: reduces at common waists to
+  `(2w₁w₂/(w₁²+w₂²))²·exp(−2x₀²/(w₁²+w₂²))·exp(−k²θ²w₁²w₂²/(2(w₁²+w₂²)))`,
+  and for w₁ = w₂ = w to Marcuse's `exp(−x₀²/w²)` and `exp(−(πnwθ/λ)²)`;
+  mode-matched ⇒ exactly 1. General complex q matters for the north-star
+  demo (beam is not mode-matched during focal-length sweeps).
+- 2026-08-26 19:18 — dispatched to claude: You are building workstream 1 of the Optics Studio project in this directory (/Users/lukemcevoy/Deve
