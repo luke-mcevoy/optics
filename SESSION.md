@@ -81,3 +81,21 @@ w=1 mm, f=50 mm golden numbers.
 **Unresolved / watch:** kernel workstream 1 is green; next work should build the
 bench schema, declarative element registry, and generic propagation fold without
 duplicating physics outside `packages/kernel`.
+- 2026-08-26 19:47 — dispatched to codex: You are building workstream 2 of the Optics Studio project in this directory (/Users/lukemcevoy/Deve
+
+## 2026-08-26 — Codex (workstream 2 bench package)
+
+**Done:** created `packages/bench` with the serializable bench schema,
+declarative element registry, generic propagation fold, measurements, sweep,
+and 16 Vitest tests. Verified from repo root with `npm test` and
+`npm run typecheck`; kernel remained untouched and its 80 tests still pass.
+
+**Key decisions:** elements stay as trait data only; compound `beam_expander`
+expands into primitive lenses before the same fold runs. Aperture checks use
+the stated 2w Gaussian diameter convention: PASS <=70% filled, WARNING <=100%,
+FAIL above clear aperture. Polarizing elements use Jones intensity loss in the
+generic fold so power remains traceable without per-element propagation logic.
+
+**Unresolved / watch:** package-lock was not regenerated because deps were
+already installed and the task said not to run install unless required; a future
+install may add the workspace package to the lockfile.
