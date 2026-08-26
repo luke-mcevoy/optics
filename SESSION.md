@@ -62,3 +62,22 @@ good reason emerges):**
   mode-matched ⇒ exactly 1. General complex q matters for the north-star
   demo (beam is not mode-matched during focal-length sweeps).
 - 2026-08-26 19:18 — dispatched to claude: You are building workstream 1 of the Optics Studio project in this directory (/Users/lukemcevoy/Deve
+- 2026-08-26 19:24 — dispatched to claude: You are building workstream 1 of the Optics Studio project in this directory (/Users/lukemcevoy/Deve
+- 2026-08-26 19:30 — dispatched to claude: You are building workstream 1 of the Optics Studio project in this directory (/Users/lukemcevoy/Deve
+- 2026-08-26 19:41 — dispatched to codex: You are continuing workstream 1 of the Optics Studio project in this directory (/Users/lukemcevoy/De
+- 2026-08-26 19:44 — dispatched to codex: You are finishing workstream 1 of the Optics Studio project in this directory (/Users/lukemcevoy/Dev
+
+## 2026-08-26 — Codex (workstream 1 completion)
+
+**Done:** fixed the coupling test exponent parse error, added `power.test.ts`
+with a hand-checked power budget golden and seeded passive-power property test,
+and reran `npm run typecheck` plus `npm test` successfully.
+
+**Key decisions:** tightened unit arithmetic with `NoInfer` so mixed dimensions
+cannot pass through generic union inference; corrected two Gaussian test literals
+to exact formula-derived values while preserving the authoritative 1064 nm,
+w=1 mm, f=50 mm golden numbers.
+
+**Unresolved / watch:** kernel workstream 1 is green; next work should build the
+bench schema, declarative element registry, and generic propagation fold without
+duplicating physics outside `packages/kernel`.
