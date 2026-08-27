@@ -74,13 +74,21 @@ input[type="range"] {
   border-left: 1px solid #d6dde2;
 }
 
-.pane-header,
-.bench-title {
+.pane-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
   margin-bottom: 18px;
+}
+
+.bench-title {
+  margin-bottom: 6px;
+}
+
+.readout-strip {
+  justify-content: flex-start;
+  margin: 0 0 12px;
 }
 
 .pane-header h1,
@@ -210,8 +218,8 @@ input[type="range"] {
 }
 
 .bench-pane {
-  display: grid;
-  grid-template-rows: auto 1fr;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   padding: 18px 20px;
   background: #eef2f4;
@@ -279,13 +287,13 @@ input[type="range"] {
 }
 
 .beam-fill {
-  fill: rgba(31, 122, 140, 0.18);
+  fill: rgba(220, 38, 38, 0.16);
   cursor: crosshair;
 }
 
 .beam-edge {
   fill: none;
-  stroke: #1f7a8c;
+  stroke: #dc2626;
   stroke-width: 2.2;
 }
 

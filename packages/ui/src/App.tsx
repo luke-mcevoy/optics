@@ -410,17 +410,15 @@ function BenchView(props: {
   return (
     <section className="bench-pane">
       <div className="bench-title">
-        <div>
-          <p className="eyebrow">Optical bench</p>
-          <h1>Optics Studio</h1>
-          <p className="header-subtitle">{HEADER_SUBTITLE}</p>
-        </div>
-        <div className="readout">
-          <Readout label="waist w0" value={formatMetres(waistYM)} />
-          <Readout label="waist position" value={formatMetres(waistXM)} />
-        </div>
+        <p className="eyebrow">Optical bench</p>
+        <h1>Optics Studio</h1>
+        <p className="header-subtitle">{HEADER_SUBTITLE}</p>
       </div>
       <p className="preset-caption">{PRESET_CAPTIONS[props.presetId]}</p>
+      <div className="readout readout-strip">
+        <Readout label="waist w0" value={formatMetres(waistYM)} />
+        <Readout label="waist position" value={formatMetres(waistXM)} />
+      </div>
       <svg className="bench-svg" viewBox={`0 0 ${geom.width} ${geom.height}`} role="img" aria-label="Live optical bench">
         <rect x="0" y="0" width={geom.width} height={geom.height} rx="0" className="svg-bg" />
         <line x1={geom.padX} y1={geom.axisY} x2={geom.width - geom.padX} y2={geom.axisY} className="axis" />
@@ -491,11 +489,15 @@ function ElementGlyph(props: {
     onClick: () => props.onSelect(props.state.element.id),
   };
   if (type === 'thin_lens') {
+    // One closed biconvex outline: top vertex bulging out to each side.
+    const top = props.geom.axisY - 78;
+    const bottom = props.geom.axisY + 78;
     return (
       <g {...common}>
-        <path d={`M ${x - 8} ${props.geom.axisY - 78} Q ${x + 10} ${props.geom.axisY} ${x - 8} ${props.geom.axisY + 78}`} />
-        <path d={`M ${x + 8} ${props.geom.axisY - 78} Q ${x - 10} ${props.geom.axisY} ${x + 8} ${props.geom.axisY + 78}`} />
-        <GlyphLabel x={x} y={props.geom.axisY - 92} text={props.state.element.id} />
+        <path
+          d={`M ${x} ${top} Q ${x + 16} ${props.geom.axisY} ${x} ${bottom} Q ${x - 16} ${props.geom.axisY} ${x} ${top} Z`}
+        />
+        <GlyphLabel x={x} y={top - 14} text={props.state.element.id} />
       </g>
     );
   }
