@@ -99,3 +99,22 @@ generic fold so power remains traceable without per-element propagation logic.
 **Unresolved / watch:** package-lock was not regenerated because deps were
 already installed and the task said not to run install unless required; a future
 install may add the workspace package to the lockfile.
+- 2026-08-26 19:55 — dispatched to codex: You are building workstream 3 (final core workstream) of the Optics Studio project in this directory
+
+## 2026-08-26 — Codex (workstream 3 tools package)
+
+**Done:** created `packages/tools` as a provider-agnostic pure TypeScript tool
+layer over `@optics/bench` and `@optics/kernel`, exposing create/add/set/remove,
+propagate, measure, sweep, explain, and `TOOL_DESCRIPTORS`. Added 7 Vitest
+tests covering round-trip behavior, grounding against direct bench measurements,
+purity, explanations, errors, and the north-star fiber-coupling sweep.
+
+**Key decisions:** kept the package as a thin adapter with no LLM SDK or network
+code; all numerical values come from bench/kernel calls with structured
+provenance. `sweep` returns generic waist measurements for every point and adds
+coupling efficiency when an SMF element is present, so non-fiber sweeps remain
+usable.
+
+**Unresolved / watch:** did not run `npm install`; package resolution for tests
+and typecheck uses local aliases in `packages/tools`. A future install may add
+the workspace package to `package-lock.json`.
