@@ -138,3 +138,21 @@ usable.
 **Unresolved / watch:** did not run `npm install`; package resolution for tests
 and typecheck uses local aliases in `packages/tools`. A future install may add
 the workspace package to `package-lock.json`.
+- 2026-08-26 20:26 — dispatched to codex: You are building the v1 bench UI for the Optics Studio project in this directory (/Users/lukemcevoy/
+
+## 2026-08-27 — Codex (v1 bench UI)
+
+**Done:** replaced the placeholder UI with a three-pane React bench sandbox in
+`packages/ui/src`: presets, editable element list/parameters, live SVG beam
+envelope, selectable element glyphs, inspector panels, aperture status colors,
+and focal-length sweep mini-plots. Verified with `npm run typecheck` and
+`npm run build --workspace @optics/ui`.
+
+**Key decisions:** kept the UI as a consumer of `@optics/tools` propagation,
+measurement, sweep, and explanation calls so displayed physics numbers remain
+grounded; added passive downstream observation planes to non-terminal presets
+so the existing propagator emits enough samples to draw the post-lens beam.
+
+**Unresolved / watch:** no browser/Playwright visual check was run because the
+task explicitly said not to open a browser; future UI work should inspect the
+rendered layout interactively.

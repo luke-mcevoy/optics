@@ -1,0 +1,397 @@
+:root {
+  color: #1f2933;
+  background: #eef2f4;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 1100px;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+select,
+input[type="number"] {
+  border: 1px solid #c8d1d8;
+  background: #ffffff;
+  color: #1f2933;
+}
+
+button {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+select,
+input[type="number"] {
+  width: 100%;
+  border-radius: 6px;
+  padding: 0.48rem 0.55rem;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #1f7a8c;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 315px minmax(520px, 1fr) 350px;
+  min-height: 100vh;
+}
+
+.pane {
+  min-height: 100vh;
+  padding: 18px;
+  overflow: auto;
+  background: #f8fafb;
+}
+
+.controls-pane {
+  border-right: 1px solid #d6dde2;
+}
+
+.inspector-pane {
+  border-left: 1px solid #d6dde2;
+}
+
+.pane-header,
+.bench-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.pane-header h1,
+.bench-title h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: #60717d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.field,
+.param-editor {
+  display: grid;
+  gap: 7px;
+}
+
+.field span,
+.param-editor span {
+  color: #42515b;
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+
+.section,
+.panel-block {
+  margin-top: 20px;
+}
+
+.section h2,
+.panel-block h2 {
+  margin: 0 0 10px;
+  color: #26343d;
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.section-title h2 {
+  margin: 0;
+}
+
+.element-list {
+  display: grid;
+  gap: 7px;
+}
+
+.element-row {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+}
+
+.element-row.selected {
+  border-color: #1f7a8c;
+  background: #e9f7f8;
+}
+
+.element-row span {
+  font-weight: 700;
+}
+
+.element-row small,
+.muted {
+  color: #667783;
+}
+
+.add-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.param-list {
+  display: grid;
+  gap: 14px;
+}
+
+.param-editor span {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.param-editor strong {
+  color: #1f2933;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.bench-pane {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  padding: 18px 20px;
+  background: #eef2f4;
+}
+
+.readout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.readout span,
+.type-pill {
+  border: 1px solid #c9d5da;
+  border-radius: 999px;
+  padding: 0.35rem 0.55rem;
+  background: #ffffff;
+  color: #324650;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.bench-svg {
+  width: 100%;
+  height: min(72vh, 640px);
+  min-height: 470px;
+  border: 1px solid #ccd6dc;
+  background: #fbfcfd;
+}
+
+.svg-bg {
+  fill: #fbfcfd;
+}
+
+.axis,
+.tick,
+.plot-axis {
+  stroke: #8fa1ad;
+  stroke-width: 1.3;
+}
+
+.tick-label,
+.axis-label,
+.glyph-label,
+.plot-label {
+  fill: #5d6d77;
+  font-size: 13px;
+}
+
+.beam-fill {
+  fill: rgba(31, 122, 140, 0.18);
+  cursor: crosshair;
+}
+
+.beam-edge {
+  fill: none;
+  stroke: #1f7a8c;
+  stroke-width: 2.2;
+}
+
+.waist-marker {
+  stroke: #111827;
+  stroke-dasharray: 4 5;
+  stroke-width: 1.4;
+}
+
+.waist-label {
+  fill: #111827;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.glyph {
+  cursor: pointer;
+}
+
+.glyph path,
+.glyph rect,
+.glyph circle,
+.glyph line {
+  fill: rgba(255, 255, 255, 0.9);
+  stroke: #198754;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.glyph.warning path,
+.glyph.warning rect,
+.glyph.warning circle,
+.glyph.warning line {
+  stroke: #b7791f;
+}
+
+.glyph.fail path,
+.glyph.fail rect,
+.glyph.fail circle,
+.glyph.fail line {
+  stroke: #c2410c;
+}
+
+.glyph.selected path,
+.glyph.selected rect,
+.glyph.selected circle,
+.glyph.selected line {
+  stroke-width: 4.5;
+}
+
+.glyph-label {
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #fbfcfd;
+  stroke-width: 4;
+}
+
+.info-grid {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.info-grid div {
+  display: grid;
+  grid-template-columns: minmax(88px, 0.72fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  border-bottom: 1px solid #e0e6ea;
+  padding-bottom: 7px;
+}
+
+.info-grid dt {
+  color: #667783;
+  font-size: 0.78rem;
+}
+
+.info-grid dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #1f2933;
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+
+.matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  border-left: 3px solid #b9c5cc;
+  border-right: 3px solid #b9c5cc;
+  padding: 8px;
+}
+
+.matrix span {
+  min-width: 0;
+  border: 1px solid #dde4e8;
+  padding: 7px;
+  background: #ffffff;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.78rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.assumptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.assumptions li {
+  border: 1px solid #d1dbe0;
+  border-radius: 999px;
+  padding: 0.28rem 0.48rem;
+  background: #ffffff;
+  color: #40515b;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.mini-plot {
+  width: 100%;
+  height: auto;
+  background: #ffffff;
+  border: 1px solid #dce4e8;
+}
+
+.plot-line {
+  fill: none;
+  stroke: #1f7a8c;
+  stroke-width: 2;
+}
+
+.plot-current {
+  stroke: #111827;
+  stroke-dasharray: 3 4;
+}
+
+.plot-dot {
+  fill: #111827;
+}
