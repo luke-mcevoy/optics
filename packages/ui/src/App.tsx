@@ -60,6 +60,35 @@ const PARAM_SPECS: Record<string, ParamSpec> = {
   tilt: { label: 'tilt', unit: 'rad', min: -0.005, max: 0.005, step: 0.00001 },
 };
 
+const HEADER_SUBTITLE =
+  'A simulated laser beam travels left to right. The shaded band shows how wide the beam is at each point along the table.';
+
+const PRESET_CAPTIONS: Record<PresetId, string> = {
+  focus:
+    'A 1 mm-wide laser beam hits a lens. The lens squeezes it to its tightest point — the waist — about 50 mm later, then it spreads out again.',
+  expander:
+    'Two lenses form a telescope: the beam leaves 3x wider and still parallel. (Wider beams can later be focused to smaller spots.)',
+  fiber:
+    "A lens focuses the beam onto the tip of an optical fiber. Light only gets in if the focused spot matches the fiber's ~5 um core — coupling efficiency is the fraction that makes it.",
+};
+
+const GLOSSES: Record<string, string> = {
+  'w(z)': "beam radius here — half the band's height",
+  'R(z)': 'wavefront curvature (flat means collimated)',
+  'waist w0': 'the smallest the beam gets',
+  'waist position': 'where along the table the beam is tightest',
+  power: 'light power remaining after losses so far',
+  'coupling efficiency': 'fraction of the light that actually enters the fiber',
+};
+
+const ASSUMPTION_GLOSSES: Record<string, string> = {
+  'thin-lens': 'lens treated as infinitely thin',
+  paraxial: 'valid for rays at small angles to the axis',
+  TEM00: 'beam assumed to be a perfect single-mode Gaussian',
+  'ideal-surface': 'no aberrations or surface errors',
+  scalar: 'polarization and vector effects ignored in beam-size math',
+};
+
 const TYPE_DEFAULTS: Record<string, { readonly position: number; readonly params: Record<string, number> }> = {
   thin_lens: { position: 0.05, params: { f: 0.05, diameter: 0.0127, T: 0.995 } },
   mirror_flat: { position: 0.08, params: { R: 0.99, diameter: 0.0127 } },
@@ -152,6 +181,7 @@ export function App() {
   const [presetId, setPresetId] = useState<PresetId>('focus');
   const [bench, setBench] = useState<Bench>(() => presetById('focus').build());
   const [selectedId, setSelectedId] = useState<string | null>('lens_50mm');
+  const [showIntro, setShowIntro] = useState(() => localStorage.getItem('optics:intro-dismissed') !== 'true');
 
   const result = useMemo(() => propagate(bench), [bench]);
   const selectedElement = bench.elements.find((element) => element.id === selectedId) ?? null;
@@ -193,8 +223,14 @@ export function App() {
     setSelectedId(next.elements[0]?.id ?? null);
   };
 
+  const dismissIntro = () => {
+    localStorage.setItem('optics:intro-dismissed', 'true');
+    setShowIntro(false);
+  };
+
   return (
     <main className="app-shell">
+      {showIntro && <IntroCard onDismiss={dismissIntro} />}
       <ControlsPane
         bench={bench}
         onAdd={addElement}
@@ -205,9 +241,29 @@ export function App() {
         presetId={presetId}
         selectedId={selectedId}
       />
-      <BenchView result={result} selectedId={selectedId} onSelect={setSelectedId} />
+      <BenchView presetId={presetId} result={result} selectedId={selectedId} onSelect={setSelectedId} />
       <Inspector bench={bench} result={result} selectedElement={selectedElement} selectedState={selectedState} />
     </main>
+  );
+}
+
+function IntroCard(props: { readonly onDismiss: () => void }) {
+  return (
+    <div className="intro-backdrop" role="presentation">
+      <section className="intro-card" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+        <div className="section-title">
+          <h2 id="intro-title">How to read this picture</h2>
+          <button type="button" onClick={props.onDismiss}>
+            Dismiss
+          </button>
+        </div>
+        <ul>
+          <li>The shaded band IS the laser beam, seen from the side. Wide = unfocused, pinched = focused.</li>
+          <li>Click any element (lens, fiber...) to see exactly what it does to the beam — including the matrix being applied.</li>
+          <li>Drag the sliders. Every number on screen is recomputed from real optics on every change — nothing is illustrative.</li>
+        </ul>
+      </section>
+    </div>
   );
 }
 
@@ -332,6 +388,7 @@ function ParamEditors(props: {
 }
 
 function BenchView(props: {
+  readonly presetId: PresetId;
   readonly result: PropagationResult;
   readonly selectedId: string | null;
   readonly onSelect: (id: string | null) => void;
@@ -354,14 +411,16 @@ function BenchView(props: {
     <section className="bench-pane">
       <div className="bench-title">
         <div>
-          <p className="eyebrow">Live deterministic propagation</p>
-          <h1>Optical bench</h1>
+          <p className="eyebrow">Optical bench</p>
+          <h1>Optics Studio</h1>
+          <p className="header-subtitle">{HEADER_SUBTITLE}</p>
         </div>
         <div className="readout">
-          <span>waist {formatMetres(waistYM)}</span>
-          <span>at {formatMetres(waistXM)}</span>
+          <Readout label="waist w0" value={formatMetres(waistYM)} />
+          <Readout label="waist position" value={formatMetres(waistXM)} />
         </div>
       </div>
+      <p className="preset-caption">{PRESET_CAPTIONS[props.presetId]}</p>
       <svg className="bench-svg" viewBox={`0 0 ${geom.width} ${geom.height}`} role="img" aria-label="Live optical bench">
         <rect x="0" y="0" width={geom.width} height={geom.height} rx="0" className="svg-bg" />
         <line x1={geom.padX} y1={geom.axisY} x2={geom.width - geom.padX} y2={geom.axisY} className="axis" />
@@ -374,7 +433,13 @@ function BenchView(props: {
           </g>
         ))}
         <text x={geom.padX} y={42} className="axis-label">
-          w scale: +/-{formatMetres(geom.wMax)}
+          beam half-width
+        </text>
+        <text x={geom.padX} y={60} className="axis-note">
+          (vertical scale hugely magnified)
+        </text>
+        <text x={geom.width / 2} y={geom.height - 18} className="axis-label" textAnchor="middle">
+          distance along table (mm)
         </text>
         <polygon points={`${envelope} ${lower}`} className="beam-fill" onClick={() => props.onSelect(null)} />
         <polyline points={envelope} className="beam-edge" />
@@ -387,7 +452,7 @@ function BenchView(props: {
           className="waist-marker"
         />
         <text x={geom.x(waistXM) + 8} y={geom.y(waistYM) - 8} className="waist-label">
-          w0 {formatMetres(waistYM)}
+          waist (tightest focus): {formatMetres(waistYM)}
         </text>
         {props.result.elements.map((state) => (
           <ElementGlyph
@@ -400,6 +465,15 @@ function BenchView(props: {
         ))}
       </svg>
     </section>
+  );
+}
+
+function Readout(props: { readonly label: string; readonly value: string }) {
+  return (
+    <span>
+      <strong>{props.label}</strong> {props.value}
+      <small>{GLOSSES[props.label]}</small>
+    </span>
   );
 }
 
@@ -517,10 +591,11 @@ function Inspector(props: {
         rows={[
           ['z', formatLength(props.selectedElement.position)],
           ['transmission', formatPercent(transmission)],
-          ['spot after', formatMeasurement(spot)],
-          ['waist after', `${formatMeasurement(waist)} at ${formatMeasurement(waistZ)}`],
-          ['wavefront R', Number.isFinite(units.toM(radius)) ? formatLength(radius) : 'flat'],
-          ['power after', formatMeasurement(power)],
+          ['w(z)', formatMeasurement(spot)],
+          ['waist w0', formatMeasurement(waist)],
+          ['waist position', formatMeasurement(waistZ)],
+          ['R(z)', Number.isFinite(units.toM(radius)) ? formatLength(radius) : 'flat (collimated)'],
+          ['power', formatMeasurement(power)],
           ['polarization', ellipseSummary(ellipse.value)],
         ]}
       />
@@ -528,10 +603,12 @@ function Inspector(props: {
         <KeyValues values={props.selectedElement.params} />
       </Panel>
       <Panel title="ABCD matrix">
+        <p className="gloss">the 2x2 matrix this element multiplies into the beam — its entire effect on beam geometry</p>
         <Matrix values={[[abcd.A, abcd.B], [abcd.C, abcd.D]]} />
       </Panel>
       {!isJonesIdentity(jm) && (
         <Panel title="Jones matrix">
+          <p className="gloss">how this element transforms the polarization</p>
           <Matrix values={[[jm.xx, jm.xy], [jm.yx, jm.yy]]} />
         </Panel>
       )}
@@ -551,11 +628,15 @@ function Inspector(props: {
       </Panel>
       <SweepPlot bench={props.bench} element={props.selectedElement} />
       <Panel title="Assumptions">
-        <ul className="assumptions">
+        <p className="gloss">the idealizations behind these numbers — click any to read what it means</p>
+        <div className="assumptions">
           {assumptions.map((assumption) => (
-            <li key={assumption}>{assumption}</li>
+            <details key={assumption}>
+              <summary>{assumption}</summary>
+              <p>{ASSUMPTION_GLOSSES[assumption] ?? 'model assumption used by this calculation'}</p>
+            </details>
           ))}
-        </ul>
+        </div>
       </Panel>
     </aside>
   );
@@ -595,10 +676,11 @@ function BenchSummary(props: { readonly bench: Bench; readonly result: Propagati
         <InfoGrid
           rows={[
             ['z', formatMetres(finalZ)],
-            ['spot radius', formatMeasurement(finalSpot)],
-            ['waist', `${formatMeasurement(waist)} at ${formatMeasurement(waistZ)}`],
+            ['w(z)', formatMeasurement(finalSpot)],
+            ['waist w0', formatMeasurement(waist)],
+            ['waist position', formatMeasurement(waistZ)],
             ['power', formatMeasurement(finalPower)],
-            ...(coupling ? ([['fiber coupling', formatMeasurement(coupling)]] as const) : []),
+            ...(coupling ? ([['coupling efficiency', formatMeasurement(coupling)]] as const) : []),
           ]}
         />
       </Panel>
@@ -642,6 +724,11 @@ function SweepPlot(props: { readonly bench: Bench; readonly element: BenchElemen
 
   return (
     <Panel title={metric === 'coupling' ? 'Coupling vs f' : 'Output waist vs f'}>
+      {metric === 'coupling' && (
+        <p className="gloss">
+          Each point: move the lens focal length there, recompute everything, measure coupling. The peak is mode matching — where the focused spot best matches the fiber core.
+        </p>
+      )}
       <svg className="mini-plot" viewBox={`0 0 ${width} ${height}`} role="img">
         <line x1={pad} y1={height - pad} x2={width - pad} y2={height - pad} className="plot-axis" />
         <line x1={pad} y1={pad} x2={pad} y2={height - pad} className="plot-axis" />
@@ -674,7 +761,10 @@ function InfoGrid(props: { readonly rows: readonly (readonly [string, string])[]
       {props.rows.map(([key, value]) => (
         <div key={key}>
           <dt>{key}</dt>
-          <dd>{value}</dd>
+          <dd>
+            {value}
+            {GLOSSES[key] && <small>{GLOSSES[key]}</small>}
+          </dd>
         </div>
       ))}
     </dl>

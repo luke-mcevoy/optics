@@ -156,3 +156,16 @@ so the existing propagator emits enough samples to draw the post-lens beam.
 **Unresolved / watch:** no browser/Playwright visual check was run because the
 task explicitly said not to open a browser; future UI work should inspect the
 rendered layout interactively.
+- 2026-08-26 20:44 — dispatched to codex: UX-writing task for the Optics Studio UI in /Users/lukemcevoy/Develop/Code/optics. Read AGENTS.md an
+
+## 2026-08-27 — Codex (UI plain-language pass)
+
+**Done:** updated `packages/ui/src/App.tsx` and `styles.css` with the requested
+plain-language header subtitle, preset captions, SVG axis/waist labels,
+quantity glosses, assumption explainers, fiber sweep caption, and a
+localStorage-backed dismissible intro card. Verified with `npm run typecheck`
+and `npm run build --workspace @optics/ui`.
+
+**Key decisions / watch:** kept changes entirely in the UI layer and left
+kernel/bench/tools untouched; explanatory copy is muted and attached directly
+to existing values so it adds context without hiding the computed numbers.
