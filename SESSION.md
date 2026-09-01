@@ -227,3 +227,16 @@ Workspace names verified against each package's `name` field; no matrix.
 
 **Unresolved / next:** Add `@optics/ui` to CI once lab WIP lands; consider a
 separate UI build job later.
+- 2026-08-31 21:36 — dispatched to cursor (composer-2.5): root README.md for the repo
+
+## 2026-08-31 — Cursor agent (root README.md)
+
+**Done:** Added root `README.md`: mission paragraph from AGENTS.md, current v1
+status (kernel/bench/tools/agent with test counts, UI in active dev, chat panel
+not wired), package table, quickstart (install, typecheck, per-workspace tests,
+UI dev, Ollama + `runAgentTurn` example), grounding rule and claim auditor in
+two sentences, pointer to AGENTS.md. Scoped to what exists; no badges/emojis.
+
+**Unresolved / next:** Add a small CLI or script entry for live Ollama turns;
+wire chat panel per PLAN-AGENT-CHAT.md Phase 2; mention README in CI or docs
+index when UI stabilizes.
