@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
-import { meanRadiusA0, radialProbability } from '../../physics/orbitals.ts';
+import { meanRadiusA0, rMaxA0, radialProbability } from '../../physics/orbitals.ts';
 
 export function RadialPlot({ n, l, color }: { n: number; l: number; color: string }) {
   const { r, p } = useMemo(() => radialProbability(n, l), [n, l]);
   const mean = meanRadiusA0(n, l);
-  const rMax = 3.2 * n * n;
+  const rMax = rMaxA0(n, l);
   const w = 320;
   const h = 168;
   const pad = { l: 36, r: 12, t: 14, b: 28 };

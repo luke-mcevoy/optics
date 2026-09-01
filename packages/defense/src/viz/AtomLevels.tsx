@@ -25,6 +25,9 @@ export function AtomLevels() {
   const rRyd = meanRadiusNm(n, 0);
   const ratio = rRyd / r5s;
   const compareScale = worldScale(n);
+  // With the default worldScale, an s-state cloud has ⟨r⟩ = 1.5·(2.4/2.2) world units.
+  const worldMeanR = 1.5 * (2.4 / 2.2);
+  const barNm = (lengthWorld: number, meanNm: number) => (lengthWorld / worldMeanR) * meanNm;
   const plotN = mode === '5p' || mode === '5s' ? 5 : n;
   const plotL = mode === '5p' ? 1 : 0;
   const plotColor = mode === '5p' ? '#d4a24a' : mode === '5s' ? '#6ea8d4' : '#b08ad6';
@@ -36,10 +39,9 @@ export function AtomLevels() {
         <>
           Look at panel <strong>b</strong>. The blue fog is the one valence electron of a
           rubidium atom: each dot is a random draw from |ψ|², the probability of finding the
-          electron there. The gold speck is the nucleus plus closed shells. As drawn (a
-          hydrogenic stand-in) the cloud&rsquo;s mean radius is ⟨r⟩ ≈ {r5s.toFixed(1)} nm; the
-          real Rb 5s is a few times tighter. This fuzzy object — not a little planet — is what
-          the machine stores bits in.
+          electron there. The gold speck is the nucleus plus closed shells. The cloud&rsquo;s
+          mean radius is ⟨r⟩ ≈ {r5s.toFixed(2)} nm — a quarter of a nanometre. This fuzzy
+          object — not a little planet — is what the machine stores bits in.
         </>
       ),
     },
@@ -71,8 +73,8 @@ export function AtomLevels() {
       text: (
         <>
           Still panel <strong>b</strong>, but the scale bar just changed by two orders of
-          magnitude. This is the same electron excited to n = {n}: mean radius grows as n², so
-          ⟨r⟩ ≈ {rRyd.toFixed(0)} nm — about {ratio.toFixed(0)}× the ground state. Drag the n
+          magnitude. This is the same electron excited to n = {n}: mean radius grows as (n*)²,
+          so ⟨r⟩ ≈ {rRyd.toFixed(0)} nm — about {ratio.toFixed(0)}× the ground state. Drag the n
           slider and watch it swell. A huge, loosely bound electron makes the atom violently
           polarizable — that is the property the entangling gate uses.
         </>
@@ -110,18 +112,20 @@ export function AtomLevels() {
         <Slider label="principal n" value={n} min={15} max={70} step={1} onChange={setN} />
       )}
       <Figure
-        n="2"
+        n="3"
         title="The valence electron of ⁸⁷Rb"
         caption={
           <>
-            Hydrogenic stand-in (real 5s has quantum defect n* ≈ 1.87 and is tighter). Panel a is
-            the level diagram a spectroscopist would draw; the active state is brighter. Panel b
-            samples |ψ|² in 3D — each point is one draw of the electron’s position; the gold speck
-            is the nucleus. Panel c is the radial probability r²R(r)² with ⟨r⟩ marked.{' '}
+            Hydrogenic radial shapes with the rubidium quantum defects setting the size: n* = n − δ
+            with δ<sub>s</sub> = 3.13, δ<sub>p</sub> = 2.65, so 5s has n* ≈ 1.87 and ⟨r⟩ = ½(3n*² −
+            ℓ(ℓ+1)) a₀. Panel a is the level diagram a spectroscopist would draw; the active state
+            is brighter. Panel b samples |ψ|² in 3D — each point is one draw of the electron’s
+            position; the gold speck is the nucleus. Panel c is the radial probability r²R(r)²
+            with ⟨r⟩ marked.{' '}
             {mode === 'compare'
               ? `Both orbitals share one world scale, so 5s is the spark at the origin (⟨r⟩ ratio ≈ ${ratio.toFixed(0)}×).`
               : `⟨r⟩(5s) ≈ ${r5s.toFixed(2)} nm; ⟨r⟩(n=${n}) ≈ ${rRyd.toFixed(0)} nm.`}{' '}
-            For n &gt; 12 the nodal pattern is n = 12 and the radius scales as n².
+            For n &gt; 12 the nodal pattern is drawn for n = 12 and the radius scales as (n*)².
           </>
         }
       >
@@ -133,14 +137,14 @@ export function AtomLevels() {
             {mode === '5s' && (
               <>
                 <AtomCloud n={5} l={0} color="#6ea8d4" count={22000} />
-                <ScaleBar length={0.9} label={`${(r5s * 0.7).toFixed(1)} nm`} />
+                <ScaleBar length={0.9} label={`${barNm(0.9, r5s).toFixed(2)} nm`} />
               </>
             )}
             {mode === '5p' && <AtomCloud n={5} l={1} color="#d4a24a" count={22000} />}
             {mode === 'rydberg' && (
               <>
                 <AtomCloud n={n} l={0} color="#b08ad6" count={24000} size={0.04} opacity={0.75} />
-                <ScaleBar length={1.1} label={`${(rRyd * 0.35).toFixed(0)} nm`} />
+                <ScaleBar length={1.1} label={`${barNm(1.1, rRyd).toFixed(0)} nm`} />
               </>
             )}
             {mode === 'compare' && (

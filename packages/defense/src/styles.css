@@ -499,7 +499,48 @@ article p em { font-style: italic; color: inherit; }
 }
 
 .npanel .stage3d { height: 300px; }
+.npanel .stage3d.tall,
+.stage3d.tall { height: 620px; }
 .npanel .board-stage { margin: 0; }
+
+/* Live phase label drawn over a 3D stage (escapes the generic .stage3d > div fill rule). */
+.stage3d > .stage-phase {
+  position: absolute;
+  inset: auto;
+  top: 10px;
+  right: 12px;
+  width: auto;
+  height: auto;
+  z-index: 2;
+  pointer-events: none;
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--cream);
+  background: rgba(12, 13, 14, 0.7);
+  border: 1px solid var(--line);
+  padding: 4px 8px;
+}
+.stage3d > .stage-phase span:empty { display: none; }
+
+.beam-key {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--muted);
+}
+.beam-key li { display: flex; align-items: center; gap: 6px; }
+.beam-key .swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
 .npanel .board-cap { display: none; }
 
 .board-stage { margin: 4px 0 8px; }

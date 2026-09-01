@@ -29,7 +29,7 @@ export function AtomCloud({
     () => sampleOrbital({ n, l, count, seed: Math.round(n * 17 + l * 9) }),
     [n, l, count],
   );
-  const s = scale ?? worldScale(n);
+  const s = scale ?? worldScale(n, 2.4, l);
   const geom = useMemo(() => {
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(positions, 3));

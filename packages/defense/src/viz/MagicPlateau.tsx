@@ -81,7 +81,7 @@ export function MagicPlateau() {
     <div className="board">
       <Steps steps={steps} current={step} onStep={setStep} />
       <Figure
-        n="13"
+        n="14"
         title="Robust angles are the gates the code can absorb"
         caption={
           <>

@@ -38,15 +38,27 @@ This is an **unofficial** explainer of a **published** article. It is not affili
 ## Demo
 
 <p align="center">
-  <img src="docs/cycle.png" alt="One QEC round animated: storage, entangle, read out, refill" />
+  <img src="docs/apparatus-move.png" alt="A block of 128 atoms in AOD tweezers gliding from storage into the entangling zone" />
   <br />
-  <em>One round of error correction as choreography — scrub the timeline or watch it play: interleave, 270 ns CZ, readout, refill from the reservoir.</em>
+  <em><strong>Fig. 1, “The processor, drawn in light.”</strong> The whole machine at one scale (1 unit = 20 μm): four zones sized from the paper’s Methods, ~500 atoms, each held in an 852 nm Gaussian tweezer whose hourglass is w(z) = w₀√(1 + (z/z_R)²). Here a block of 128 atoms in cyan AOD traps glides from storage into the entangling zone.</em>
 </p>
 
 <p align="center">
-  <img src="docs/array.png" alt="Optical-tweezer array of rubidium atoms" />
+  <img src="docs/apparatus-flash.png" alt="Rydberg flash on one gate site with the blockade sphere" />
   <br />
-  <em>A small array of trapped ⁸⁷Rb atoms. Amber cones are 852 nm tweezers; the fog is |ψ|².</em>
+  <em>Close-up on one gate site during the 270 ns CZ: the two atoms 2 μm apart, the 420 + 1013 nm sheets sweeping through, and the blockade radius R_b = (C₆/ħΩ)^{1/6} ≈ 4.4 μm — swallowing the partner, missing the next site 11 μm over.</em>
+</p>
+
+<p align="center">
+  <img src="docs/apparatus-readout.png" alt="Fluorescence photons leaving the readout zone, only the NA cone reaching the objective" />
+  <br />
+  <em>Readout: 780 nm imaging light along the rows, photons leaving isotropically, and only the (1 − cos θ)/2 = 12% inside the NA-0.65 cone climbing to the objective.</em>
+</p>
+
+<p align="center">
+  <img src="docs/cycle.png" alt="One machine layer animated: storage, entangle, read out, reset" />
+  <br />
+  <em>One layer of the cycle as choreography — scrub the timeline or watch it play: interleave, 270 ns CZ, readout, reset, refill from the reservoir.</em>
 </p>
 
 <p align="center">
@@ -68,12 +80,26 @@ This is an **unofficial** explainer of a **published** article. It is not affili
 A long-form article you can operate.
 
 - **Three reading levels** in every section: plain English for everyone, the physics for the curious, and exactly what the paper measured.
-- **Live figures:** 3D |ψ|² clouds, an animated Bloch sphere you drive with laser pulses, integrated two-atom blockade dynamics, a scrubbable error-correction round, SLM holograms, AOD shuttling, surface-code patches, the below-threshold bar chart, the 45° magic-state plateau.
+- **Live figures:** the full processor and every laser beam in it as a guided 3D tour, 3D |ψ|² clouds, an animated Bloch sphere you drive with laser pulses, integrated two-atom blockade dynamics, a scrubbable machine cycle, SLM holograms, AOD shuttling, surface-code patches, the below-threshold bar chart, the 45° magic-state plateau.
 - **Grounded claims:** 448 atoms, n = 53, 270 ns CZ, 2.14(13)× lower error at d = 5 than d = 3 on a four-round circuit — each tagged to a figure or Methods line.
 
 Sixteen chapters, from the atom to a running fault-tolerant machine:
 
 The machine · What a qubit is · The atom · Light is the toolbox · How two atoms talk · How you hold a hundred atoms · How you move them mid-circuit · Who plays the lasers · Four rooms, one processor · How you read a bit and keep the atom · Why one atom is not a computer · Proof that bigger is quieter · Doing logic on a coded bit · Every rotation you might want · Running without heating up · What would make it a computer
+
+---
+
+## Scientific accuracy
+
+Everything on screen is one of three things, and the captions say which:
+
+1. **A paper number.** Atom counts, zone dimensions, wavelengths, beam waists, gate time, detunings, fidelities, error rates, durations, decoder details. Each carries a figure or Methods tag. These live in one file, `src/data/paper.ts`, so they can be audited against the article in one sitting.
+2. **A computation from a stated formula.** Gaussian-beam envelopes (z_R = πw₀²/λ), the fluorescence collection fraction ((1 − cos θ)/2 for NA = sin θ), Rabi and light-shift scalings, the two-atom blockade Schrödinger integration, quantum-defect orbital radii (n* = n − δ_ℓ with the standard Rb defects). Code in `src/physics/`.
+3. **A drawn assumption**, always labelled. The ones that matter: the tweezer waist (1 μm; the paper does not quote it), the blockade radius (C₆ from the published n*¹¹ scaling anchored on Rb 70S — not a paper value), the objective and camera placed 60 μm above the atoms instead of millimetres, an 8× exaggerated lattice period, illustrative photon speeds and counts, and display colours for infrared beams.
+
+The text was audited line by line against the main text and Methods. Two things the earlier draft got wrong and this version fixes, in case you compared: the surface-code benchmark parks used ancilla blocks in storage and reads them all out at the end (“delayed erasure”) rather than measuring every round — per-layer measure-and-reuse is the deep-circuit architecture of Figs. 5–6; and the Rb 5s ground-state radius is set by a quantum defect (n* ≈ 1.87), so the Rydberg atom is ~700× larger, not the hydrogenic ~100× or a round “thousand”.
+
+If you find a number that does not trace to the paper or to a stated formula, it is a bug — please open an issue.
 
 ---
 

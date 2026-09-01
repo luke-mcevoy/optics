@@ -78,7 +78,7 @@ export function CameraMeasurement() {
         />
       </div>
       <Figure
-        n="9"
+        n="10"
         title="A camera measurement is fluorescence, then a threshold"
         caption={
           <>

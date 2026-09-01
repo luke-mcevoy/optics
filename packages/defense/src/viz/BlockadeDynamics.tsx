@@ -92,7 +92,7 @@ export function BlockadeDynamics() {
 
   return (
     <Figure
-      n="5"
+      n="6"
       title="Blockade dynamics: the pair shares one excitation"
       caption={
         <>

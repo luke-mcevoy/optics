@@ -45,11 +45,22 @@ export const PAPER = {
     entangleQubits: 256,
     grid: '8 × 16',
     horizontalUm: 175,
+    entanglingHeightUm: 60,
     readoutAtoms: 128,
+    readoutRows: 4,
     reservoirAtoms: 196,
+    reservoirRows: 6,
     storageSepUm: 50,
+    storageHeightUm: 35,
     layers: 27,
     circuitS: 1.1,
+  },
+  beams: {
+    imagingWaistUm: 50,
+    latticeWaistUm: 60,
+    shieldWaistUm: [35, 65] as const,
+    rydbergTophatUm: 60,
+    pairSpacingUm: 2,
   },
   lattice: {
     wavelengthNm: 795,
@@ -105,8 +116,7 @@ export const PAPER = {
   },
   logic: {
     optimalCnotsPerRound: 3,
-    surgeryBellErrPct: 15.2,
-    surgeryBellUnc: 0.3,
+    surgeryRounds: 2,
   },
   codes: {
     steane: '[[7, 1, 3]]',

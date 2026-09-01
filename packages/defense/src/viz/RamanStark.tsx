@@ -204,7 +204,7 @@ export function RamanStark() {
           852 nm tweezer holding the atom. The cyan and gold rays are the two Raman legs
           crossing at the atom. The red cone from above is the separate 1,529 nm shield beam:
           it Stark-shifts only the 5P level, detuning stored atoms out of reach of imaging
-          light scattered from the readout zone 50 μm away.
+          light scattered from the neighbouring readout zone.
         </>
       ),
     },
@@ -270,7 +270,7 @@ export function RamanStark() {
         />
       </div>
       <Figure
-        n="3"
+        n="4"
         title="Far-detuned Raman control and shielding"
         caption={
           <>

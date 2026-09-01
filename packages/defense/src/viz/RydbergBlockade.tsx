@@ -168,7 +168,7 @@ export function RydbergBlockade() {
         <Slider label="Ω_Ryd" value={drive} min={0.5} max={12} step={0.1} unit=" MHz" display={drive.toFixed(1)} onChange={setDrive} />
       </div>
       <Figure
-        n="4"
+        n="5"
         title="Rydberg blockade is a pair-state energy shift"
         caption={
           <>

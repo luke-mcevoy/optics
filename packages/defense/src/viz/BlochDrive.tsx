@@ -52,7 +52,7 @@ export function BlochDrive() {
 
   return (
     <Figure
-      n="1"
+      n="2"
       title="A gate is a rotation you can watch"
       caption={
         <>

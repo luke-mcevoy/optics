@@ -4,7 +4,7 @@ import { Eq, Sym } from '../components/Eq.tsx';
 import { Defense, Plain, Primer } from '../components/Voice.tsx';
 import { PAPER } from '../data/paper.ts';
 import { AODShuttle } from '../viz/AODShuttle.tsx';
-import { ArrayHero } from '../viz/ArrayHero.tsx';
+import { Apparatus3D } from '../viz/Apparatus3D.tsx';
 import { CameraMeasurement } from '../viz/CameraMeasurement.tsx';
 import { AtomLevels } from '../viz/AtomLevels.tsx';
 import { BelowThreshold } from '../viz/BelowThreshold.tsx';
@@ -63,12 +63,12 @@ export const CHAPTERS: Chapter[] = [
             <em> throw entropy out </em> while it computes, or the calculation dissolves.
           </p>
           <p>
-            The figures below are the argument, not decoration. Captions name what is drawn. The
-            glowing fog is the valence electron of one atom, sampled from |ψ|². Amber cones are
-            trap light.
+            The figures below are the argument, not decoration. Captions name what is drawn.
+            Start with the machine itself: every zone, every atom and every laser beam in the
+            paper&rsquo;s deep-circuit configuration, at one scale, running its cycle.
           </p>
         </Primer>
-        <ArrayHero />
+        <Apparatus3D />
         <div className="claim-row">
           <Claim value={PAPER.atoms} unit="atoms in the processor" source="Abstract" />
           <Claim value={`${PAPER.qec.belowThreshold}(${PAPER.qec.belowThresholdUnc})×`} unit="d=5 quieter than d=3" source="Fig. 2d, four QEC rounds" />
@@ -112,7 +112,8 @@ export const CHAPTERS: Chapter[] = [
             precise turns of that globe. The strange part: when you finally look, you never see
             the in-between. The globe snaps to north or south, with odds set by where it was
             leaning. In this machine each globe is one atom — &ldquo;north vs south&rdquo; is its
-            outer electron sitting in one of two energy states — and the turns are done with
+            two closely spaced energy states (they differ in how the outer electron&rsquo;s spin
+            lines up with the nucleus) — and the turns are done with
             laser pulses. The animation below is exactly this: watch a pulse of light turn one
             atom&rsquo;s globe.
           </p>
@@ -169,7 +170,7 @@ export const CHAPTERS: Chapter[] = [
             same, with zero manufacturing defects. A rubidium atom has one loosely held outer
             electron, and that electron is the moving part of the whole machine. It has two
             useful modes. Normally it hugs the atom tightly: compact, calm, good for storing
-            information. Hit it with the right laser and it balloons out to roughly a thousand
+            information. Hit it with the right laser and it balloons out to several hundred
             times its size — big enough to make its presence felt by a neighbouring atom across
             the gap. Small means memory; puffed up means talking to the neighbours. The figure
             below shows both sizes.
@@ -249,8 +250,9 @@ export const CHAPTERS: Chapter[] = [
             scattering falls as 1/Δ². Measured {PAPER.raman.scatteringPerPulse.toExponential(0)}
             per SCROFULOUS pulse. Global path plus local AOD path share a 6.8 GHz IQ reference.
             A separate Stark shift is the 1,529.49 nm shield: ~{PAPER.shield.powerW} W,
-            ~{PAPER.shield.lightshiftGHz} GHz on 5P<sub>3/2</sub>, so imaging light 50 μm away
-            does not talk to stored qubits. Ground-state polarizability ratio ~2×10<sup>−5</sup>.
+            ~{PAPER.shield.lightshiftGHz} GHz on 5P<sub>3/2</sub>, so imaging light in the
+            neighbouring readout zone does not talk to stored qubits. Ground-state polarizability
+            at that detuning is ~2×10<sup>−5</sup> of the 5P shift (Extended Data Fig. 4).
             They knife-edge the Gaussian tail; stray 1,529 nm ruins imaging. The shield slider
             interpolates that one operating point; the paper’s spectrum has Autler–Townes
             structure the slider does not contain.
@@ -287,8 +289,11 @@ export const CHAPTERS: Chapter[] = [
             Two such atoms interact with a van der Waals potential C<sub>6</sub>/R<sup>6</sup>.
             If that shift is larger than the driving Rabi frequency, the second atom cannot
             absorb the same laser — <em>blockade</em>. You do not need the electron clouds to
-            overlap; you need the pair-state energy to miss the laser. A pulse that would give
-            one isolated atom a 2π rotation then gives the pair a conditional phase: a CZ gate.
+            overlap; you need the pair-state energy to miss the laser. Drive the pair with a
+            pulse designed for isolated atoms and the blocked pair picks up a different phase
+            than two independent atoms would: a conditional phase, a CZ gate. (The textbook
+            version is a 2π pulse; the paper uses a single time-optimal pulse — same blockade,
+            shorter.)
           </p>
         </Primer>
         <RydbergBlockade />
@@ -534,8 +539,8 @@ export const CHAPTERS: Chapter[] = [
             objective collects a geometric fraction (1 − cos θ)/2 of 4π onto a
             Hamamatsu ORCA-Quest, chosen for fast electronic readout. Software sums
             two regions of interest. Occupied / empty / both-empty is |0⟩ / |1⟩ /
-            loss. Two spots 2 μm apart sit several Rayleigh lengths
-            (0.61 λ/NA ≈ 0.73 μm) apart, so they do not merge.
+            loss. Two spots 2 μm apart are separated by nearly three resolution elements
+            (Rayleigh criterion 0.61 λ/NA ≈ 0.73 μm), so they do not merge.
           </p>
         </Primer>
         <SpinToPosition />
@@ -556,7 +561,7 @@ export const CHAPTERS: Chapter[] = [
             by detuning the two σ beams by twice the Zeeman splitting (rotating frame
             cancels B), then EIT ~80 MHz blue of F=2→F′=2. Re-pump: 24 Raman-assisted
             cycles. The 1,529 nm shield exists so this 780 nm light does not talk to
-            stored qubits 50 μm away.
+            qubits parked in the storage zone one zone over.
           </p>
           <Assumption>
             Photon counts on the camera board are a teaching Poisson model. The paper
@@ -577,7 +582,8 @@ export const CHAPTERS: Chapter[] = [
       <>
         <Plain>
           <p>
-            One atom is too flaky to trust: roughly one operation in a thousand goes wrong, and a
+            One atom is too flaky to trust: somewhere between one and five operations in a
+            thousand go wrong, and a
             useful program needs billions of operations. Ordinary computers survive flakiness by
             copying — store the bit three times and take a vote. But a hard law of quantum
             mechanics says you cannot photocopy a qubit. The workaround, invented in the 1990s:
@@ -658,7 +664,9 @@ export const CHAPTERS: Chapter[] = [
         <BelowThreshold />
         <Defense>
           <p>
-            Distance-5 data block, fresh ancilla block each round, up to five rounds.
+            Distance-5 data block held static in the entangling zone; a fresh 6×6 ancilla block
+            each round (up to five), used blocks parked in storage and all read out together at
+            the end — so loss information arrives as <em>delayed</em> erasure.
             Hybrid decoder: delayed-erasure MLE (Stim model updated per shot, CMA-ES
             tuned) plus a net trained on 200 million {'{0,1,loss}'} shots, ensembled,
             fine-tuned, geometric-mean confidences 0.4 / 1. Result: 0.62(3)% LEPR at
@@ -718,9 +726,10 @@ export const CHAPTERS: Chapter[] = [
         <Defense>
           <p>
             Injected ancilla measurement error kills surgery and barely touches
-            transversal. Optimum ~3 transversal CNOTs per QEC round. Surgery at two
-            rounds (less than d=5): 15.2(3)% Bell error vs 13.1% Stim; they use
-            error detection to compensate. The Bloch / T-spacing graphic on that
+            transversal. Optimum ~3 transversal CNOTs per QEC round. Surgery was run with
+            only two stabilizer rounds (fewer than d = 5), so they add error detection on the
+            seam ancillas to compensate; their Stim simulations put the optimum at ~3 rounds
+            for this circuit (Extended Data Fig. 8d). The Bloch / T-spacing graphic on that
             board is a cartoon of Solovay–Kitaev-style densification, not the
             paper’s reconstructed angles.
           </p>
@@ -791,7 +800,8 @@ export const CHAPTERS: Chapter[] = [
             A computer that runs for a long time cannot keep its original atoms — they get lost,
             jostled, and scrambled. This machine&rsquo;s answer is a pit stop. It keeps
             teleporting the information onto fresh blocks of atoms and throws the used blocks
-            away: measure them, recycle them through the pantry, reload. The information never
+            away: measure them, re-cool and reset them, top up any that went missing from the
+            pantry. The information never
             stops moving forward; the accumulated mess stays behind on atoms that are about to be
             reset anyway, like swapping worn tyres mid-race while the car keeps going. In the
             deepest runs they replayed the same choreography 27 times over about a second — an
@@ -847,9 +857,10 @@ export const CHAPTERS: Chapter[] = [
             carry them around, run gates, photograph the helpers, fix the mistakes, swap in fresh
             atoms, repeat. That end-to-end loop, running below the break-even point where bigger
             patterns beat smaller ones, is what this paper proved for the first time in this
-            platform. What the machine is not, yet, is quiet enough: each basic operation is
-            roughly twice as error-prone as it needs to be for really long programs to become
-            cheap to protect. The authors publish their punch list — stronger lasers here, better
+            platform. What the machine is not, yet, is quiet enough: it sits about a factor of
+            two on the good side of the break-even line, and the authors estimate the basic
+            operations need to get three to five times quieter still before really long programs
+            become cheap to protect. They publish their punch list — stronger lasers here, better
             vacuum there, streaming control electronics instead of pre-recorded — and nothing on
             it requires new physics. That is the paper&rsquo;s closing claim: the remaining work
             is engineering.

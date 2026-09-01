@@ -65,7 +65,7 @@ export function BelowThreshold() {
     <div className="board">
       <Steps steps={steps} current={step} onStep={setStep} />
       <Figure
-        n="11"
+        n="12"
         title="The headline number, drawn from the paper's stated values"
         caption={
           <>

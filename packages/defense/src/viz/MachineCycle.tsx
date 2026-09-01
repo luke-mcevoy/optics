@@ -29,13 +29,13 @@ const PHASES: readonly Phase[] = [
     name: 'Hold',
     t0: 0,
     t1: 0.1,
-    text: 'Data qubits (gold) and ancillas (cyan) sit in storage under the 1,529 nm shield; hyperfine T₂ > 1 s. Nothing touches them.',
+    text: 'Data qubits (gold) and a fresh block of ancillas (cyan) sit in storage under the 1,529 nm shield; hyperfine T₂ > 1 s. Nothing touches them.',
   },
   {
     name: 'Interleave',
     t0: 0.1,
     t1: 0.28,
-    text: 'The crossed-AOD tweezers carry both rows into the entangling zone, pairing each ancilla with a data qubit. Zones sit ~40 μm apart; moving atoms dominates the round — about 2.57 ms of the 4.45 ms total.',
+    text: 'The crossed-AOD tweezers carry both rows into the entangling zone, pairing each ancilla with a data qubit. The storage and entangling zones sit 40–50 μm apart; moving atoms dominates a QEC round — about 2.57 ms of the 4.45 ms total in the surface-code experiment.',
   },
   {
     name: 'Entangle',
@@ -47,7 +47,7 @@ const PHASES: readonly Phase[] = [
     name: 'Separate',
     t0: 0.38,
     t1: 0.58,
-    text: 'Data qubits go home to storage; the ancillas — now carrying the parity information — ride down to the readout row, 55 μm below the main array.',
+    text: 'Data qubits go home to storage; the used block — now carrying the parity information — rides down to the readout zone (four rows of traps under counter-propagating 780 nm imaging beams and the 795 nm lattice). In the surface-code benchmark the used ancillas were instead parked in storage and every block was read out together at the end.',
   },
   {
     name: 'Measure',
@@ -56,16 +56,16 @@ const PHASES: readonly Phase[] = [
     text: 'Spin-to-position conversion, then a camera exposure. Bright = one clock state, dark = the other; bit-flip error 0.46(4)%. An empty site — atom loss, 0.24(2)% — is not a wrong answer. It is a flagged erasure.',
   },
   {
-    name: 'Refill',
+    name: 'Reset',
     t0: 0.72,
     t1: 0.94,
-    text: 'Measured ancillas are re-pumped and reused; the lost atom is replaced from the reservoir (196 spares in the deep-circuit configuration). Entropy leaves the machine as scattered photons and discarded atoms.',
+    text: 'The same atoms are re-cooled (1D PGC + EIT in a finite field), re-pumped with 24 Raman-assisted cycles, and reused; the lost atom is replaced from the reservoir (up to 196 spares, six rows). Entropy leaves the machine as scattered photons and discarded atoms.',
   },
   {
     name: 'Decode',
     t0: 0.94,
     t1: 1,
-    text: 'Clicks and erasure flags go to the machine-learning decoder; the correction is tracked in software as a Pauli frame — no corrective pulse needed. Then the cycle repeats.',
+    text: 'Clicks and erasure flags go to the neural-network decoder; the correction is tracked in software as a Pauli frame — no corrective pulse needed. Then the next layer begins. In the deep-circuit runs one such layer took 41.9 ms, limited by desktop image processing.',
   },
 ];
 
@@ -130,17 +130,21 @@ export function MachineCycle() {
 
   return (
     <Figure
-      n="8"
-      title="One round of error correction, as choreography"
+      n="9"
+      title="One layer of the machine's cycle, as choreography"
       caption={
         <>
-          A full quantum-error-correction round of the four-zone processor, animated. Gold atoms
-          are data qubits; cyan atoms are ancillas; grey atoms wait in the reservoir. Scrub the
-          timeline or let it play. The animation is <em>not</em> to time scale — a 270 ns gate
-          sits between millisecond-scale moves — and one entangling layer is shown where a real
-          surface-code round interleaves each ancilla with four data neighbours through several
-          move–gate steps. Durations and error rates: Methods of the paper (round time 4.45 ms,
-          of which 2.57 ms is atom motion).
+          One move–gate–measure–reset layer of the four-zone processor, animated in the
+          configuration used for the deep-circuit experiments (Figs. 5–6): the block that just
+          did its job is measured non-destructively, reset in place, topped up from the reservoir
+          and reused. Gold atoms are data qubits; cyan atoms are the working block; grey atoms
+          wait in the reservoir. Scrub the timeline or let it play. The animation is <em>not</em>{' '}
+          to time scale — a 270 ns gate sits between millisecond-scale moves — and one entangling
+          layer is shown where a real surface-code round interleaves each ancilla with four data
+          neighbours through several move–gate steps. Note the surface-code benchmark of Fig. 2
+          differs in one respect: used ancilla blocks were parked in storage and all read out at
+          the end (&ldquo;delayed erasure&rdquo;), not measured every round. Durations and
+          error rates: Methods of the paper.
         </>
       }
     >

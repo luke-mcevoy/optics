@@ -1,9 +1,26 @@
-/** Hydrogenic |ψ_nlm|² sampling. Distances in Bohr radii unless noted. */
+/**
+ * Alkali valence-electron |ψ_nlm|² sampling.
+ *
+ * Radial *shape* is hydrogenic (node count from the integer n), but the radial *scale* uses
+ * the Rb quantum defect: n* = n − δ_ℓ. For the loosely bound Rydberg electron this is the
+ * standard, accurate description; for the 5s ground state it gives ⟨r⟩ ≈ 5 a₀ rather than the
+ * hydrogenic 37 a₀, which matters when the two are drawn at one scale.
+ * Distances in Bohr radii unless noted.
+ */
 
 const A0_NM = 0.0529177;
 
+/** Rb quantum defects (n → ∞ limit), Li et al. 2003 / Mack et al. 2011. */
+const QUANTUM_DEFECT: readonly number[] = [3.131, 2.648, 1.348, 0.016];
+
+export function effectiveN(n: number, l: number): number {
+  const delta = QUANTUM_DEFECT[l] ?? 0;
+  return Math.max(l + 1, n - delta);
+}
+
 export function meanRadiusA0(n: number, l: number): number {
-  return 0.5 * (3 * n * n - l * (l + 1));
+  const ns = effectiveN(n, l);
+  return 0.5 * (3 * ns * ns - l * (l + 1));
 }
 
 export function meanRadiusNm(n: number, l: number): number {
@@ -29,10 +46,20 @@ function laguerre(k: number, alpha: number, x: number): number {
   return prev1;
 }
 
-/** Radial R_nl(r) in a0=1 units. Structure n is clamped to 12; radius is then scaled to true n. */
+/** Outer edge of the radial grid for state (n, ℓ), in a0. */
+export function rMaxA0(n: number, l: number): number {
+  const ns = effectiveN(n, l);
+  return 3.2 * ns * ns;
+}
+
+/**
+ * Radial R_nl(r) in a0 units. Nodal structure uses the integer n (clamped to 12 so the
+ * Laguerre recursion stays well conditioned); the radius is then scaled to (n*)².
+ */
 export function radialR(nPhys: number, l: number, r: number): number {
   const nStruct = Math.min(Math.max(l + 1, Math.round(nPhys > 12 ? 12 : nPhys)), 12);
-  const scale = (nPhys * nPhys) / (nStruct * nStruct);
+  const ns = effectiveN(nPhys, l);
+  const scale = (ns * ns) / (nStruct * nStruct);
   const rEff = r / scale;
   const rho = (2 * rEff) / nStruct;
   const pref = Math.sqrt(
@@ -62,7 +89,7 @@ export function sampleOrbital(opts: {
 
   const n = opts.n;
   const l = opts.l;
-  const rMax = 3.2 * n * n;
+  const rMax = rMaxA0(n, l);
   const bins = 1600;
   const cdf = new Float64Array(bins);
   let acc = 0;
@@ -104,13 +131,15 @@ export function sampleOrbital(opts: {
   return out;
 }
 
-export function worldScale(n: number, target = 2.4): number {
-  return target / (2.2 * n * n);
+/** World units per a0 so that state (n, ℓ) fills roughly `target` world units. */
+export function worldScale(n: number, target = 2.4, l = 0): number {
+  const ns = effectiveN(n, l);
+  return target / (2.2 * ns * ns);
 }
 
 /** Radial probability density r² R(r)² on [0, rMax], both in a0. */
 export function radialProbability(n: number, l: number, points = 240): { r: Float64Array; p: Float64Array } {
-  const rMax = 3.2 * n * n;
+  const rMax = rMaxA0(n, l);
   const r = new Float64Array(points);
   const p = new Float64Array(points);
   let max = 1e-18;
