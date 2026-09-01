@@ -25,9 +25,16 @@ v1 core is implemented and tested:
   `OllamaChatProvider` (default `qwen2.5:7b-instruct`), `auditClaims`, benchmark
   eval (`runScenarios`); 16 tests.
 
-**UI** (`@optics/ui`) — React bench sandbox with live beam envelope and inspector;
-3D lab view in active development. Chat panel wiring to the agent is not yet
-integrated (`PLAN-AGENT-CHAT.md` Phase 2).
+**UI** (`@optics/ui`) — React bench sandbox with live beam envelope, inspector,
+and 3D lab view. Chat panel wiring to the agent is not yet integrated
+(`PLAN-AGENT-CHAT.md` Phase 2).
+
+**Personal site** (`@optics/site`) — Luke McEvoy’s newspaper-styled laboratory
+site: CV, live PhD visualization (`/phd`), catalog of other work, and
+embedded static instruments at `/defense/`, `/studio/`, `/orders/`, `/wine/`.
+
+**Neutral-atom walkthrough** (`@optics/defense`) — chaptered explainer of
+Bluvstein, Geim et al., *Nature* **649**, 39–46 (2026), with live boards.
 
 Not built: `optimize()` tool, Michelson interferometer elements, vendor catalogs.
 
@@ -39,7 +46,10 @@ Not built: `optimize()` tool, Michelson interferometer elements, vendor catalogs
 | `@optics/bench` | Bench schema, element registry traits, propagate fold, measurements, sweep. |
 | `@optics/tools` | Agent-facing typed tools over bench/kernel with structured provenance. |
 | `@optics/agent` | Tool-calling loop, Ollama provider, claim auditor, benchmark eval scenarios. |
-| `@optics/ui` | Vite + React bench UI (manual sandbox and lab view; chat panel pending). |
+| `@optics/ui` | Vite + React bench UI (sandbox, 3D lab; chat panel pending). |
+| `@optics/site` | Personal laboratory site — CV, PhD boards, work catalog. |
+| `@optics/defense` | Neutral-atom quantum computing walkthrough (Nature 2026 paper). |
+| `@optics/defense` | Interactive explainer of a published neutral-atom QEC paper (separate from the optics bench). Live: [luke-mcevoy.github.io/neutral-atom-compute-visualizer](https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/). |
 
 ## Quickstart
 
@@ -62,6 +72,12 @@ Bench UI:
 
 ```bash
 npm run dev --workspace @optics/ui
+```
+
+Neutral-atom explainer (`@optics/defense`) — local preview, or the [deployed guide](https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/):
+
+```bash
+npm run dev --workspace @optics/defense
 ```
 
 ### Agent loop with local Ollama
