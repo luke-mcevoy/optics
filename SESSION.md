@@ -190,3 +190,25 @@ so root typecheck passes (pre-existing lab WIP, not Phase 1 scope).
 
 **Unresolved / next:** Phase 2 — chat panel in UI, Vite `/ollama` proxy, wire
 `BenchSession` to App bench state.
+- 2026-08-31 21:28 — dispatched to cursor (composer-2.5): claim auditor + benchmark eval harness in packages/agent (AGENTS.md Layer 2)
+
+## 2026-08-31 — Cursor agent (Layer 2: claim auditor + eval harness)
+
+**Done:** Built AGENTS.md Layer 2 correctness tooling in `packages/agent` only:
+`auditClaims()` (`src/audit.ts`) extracts numeric prose claims (scientific/plain,
+ignores integers ≤12 and calendar years 1900–2099), matches against numeric leaves
+in that turn's tool results within 2% rtol with SI unit scaling (10^k, k∈[−9,9])
+and percent-as-fraction×100; `BENCHMARK_SCENARIOS` + `runScenarios()` execute
+five v1 benchmark conversations expressible with current tools (f=50 mm focus,
+3× expander, fiber-coupling sweep optimum, QWP@45° circular pol, mode-matched
+coupling) with physics-derived goldens. Eight new Vitest tests; package
+typecheck and test green (14 tests).
+
+**Key decisions:** Year filter limited to 1900–2099 so nm wavelengths like 1064
+are not dropped; Michelson fringe scan omitted (no interferometer elements yet);
+scenario goldens hand-commented from kernel literals, verified by deterministic
+`BenchSession` execution.
+
+**Unresolved / next:** Wire `auditClaims` into `runAgentTurn` post-turn hook and
+surface violations in UI; extend scenarios when Michelson / alignment-sensitivity
+tools land.
