@@ -391,7 +391,13 @@ const selectedState = (result: PropagationResult, elementId?: string) =>
     ? result.final
     : result.elements.find((entry) => entry.element.id === elementId)?.after ??
       (() => {
-        throw new Error(`element "${elementId}" does not exist`);
+        // Compound elements expand into primitives during propagation, so the
+        // id the caller placed may not exist here; list what does.
+        const ids = result.elements.map((entry) => entry.element.id).sort();
+        throw new Error(
+          `element "${elementId}" does not exist in the propagated bench` +
+            (ids.length > 0 ? `; propagated element ids: ${ids.join(', ')}` : ''),
+        );
       })();
 
 const selectedBeam = (result: PropagationResult, elementId?: string) => selectedState(result, elementId).beam;
