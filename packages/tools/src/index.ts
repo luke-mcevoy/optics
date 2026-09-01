@@ -123,6 +123,18 @@ export const set_parameter = (
   });
 };
 
+export const set_position = (bench: Bench, elementId: string, zMetres: number): Bench => {
+  const base = validateBench(bench);
+  mustFindElement(base, elementId);
+  if (!Number.isFinite(zMetres)) throw new Error('position must be a finite number in metres');
+  return validateBench({
+    source: base.source,
+    elements: base.elements.map((entry) =>
+      entry.id === elementId ? { ...entry, position: units.m(zMetres) } : entry,
+    ),
+  });
+};
+
 export const remove_element = (bench: Bench, elementId: string): Bench => {
   const base = validateBench(bench);
   mustFindElement(base, elementId);

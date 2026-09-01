@@ -94,6 +94,8 @@ In the Optics Studio monorepo the same app lives at `packages/defense`:
 npm run dev --workspace @optics/defense
 ```
 
+A production snapshot is also served from the personal site at `/defense/`.
+
 ---
 
 ## Deploy

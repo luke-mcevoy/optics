@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Orders — from quarks to the observable universe</title>
+    <meta
+      name="description"
+      content="A continuous logarithmic zoom through 62 orders of magnitude, from the Planck length to the particle horizon. Every length is a measured quantity."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&family=Newsreader:ital,opsz,wght@0,16..72,300;0,16..72,400;1,16..72,300;1,16..72,400&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/orders/assets/index-Ci3FqTF2.js"></script>
+    <link rel="stylesheet" crossorigin href="/orders/assets/index-Bnla6QVI.css">
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="stage" aria-label="Scale visualization"></canvas>
+      <div id="grain" aria-hidden="true"></div>
+      <div id="vignette" aria-hidden="true"></div>
+
+      <header class="hud">
+        <div class="wordmark">
+          <em>orders</em>
+          <span>of magnitude</span>
+        </div>
+        <div class="header-actions">
+          <button type="button" id="journey" class="ghost">The journey</button>
+        </div>
+      </header>
+
+      <div id="readout" class="hud">
+        <div id="power"></div>
+        <div id="meters"></div>
+        <div id="hero-name"></div>
+        <div id="hero-size"></div>
+      </div>
+
+      <aside id="inspector" class="hud" hidden></aside>
+      <div id="caption" class="hud" hidden></div>
+      <div id="emptiness" class="hud" hidden></div>
+      <div id="hint" class="hud">Scroll to change scale — out toward galaxies, in toward atoms</div>
+
+      <footer class="hud">
+        <div id="rail"></div>
+        <input
+          id="slider"
+          type="range"
+          min="0"
+          max="10000"
+          value="5000"
+          aria-label="Logarithmic scale"
+        />
+        <div id="ticks"></div>
+      </footer>
+    </div>
+  </body>
+</html>

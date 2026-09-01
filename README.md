@@ -48,8 +48,7 @@ Not built: `optimize()` tool, Michelson interferometer elements, vendor catalogs
 | `@optics/agent` | Tool-calling loop, Ollama provider, claim auditor, benchmark eval scenarios. |
 | `@optics/ui` | Vite + React bench UI (sandbox, 3D lab; chat panel pending). |
 | `@optics/site` | Personal laboratory site — CV, PhD boards, work catalog. |
-| `@optics/defense` | Neutral-atom quantum computing walkthrough (Nature 2026 paper). |
-| `@optics/defense` | Interactive explainer of a published neutral-atom QEC paper (separate from the optics bench). Live: [luke-mcevoy.github.io/neutral-atom-compute-visualizer](https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/). |
+| `@optics/defense` | Neutral-atom walkthrough of Bluvstein, Geim et al., Nature 649 (2026). Also live at [luke-mcevoy.github.io/neutral-atom-compute-visualizer](https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/). |
 
 ## Quickstart
 
@@ -74,11 +73,30 @@ Bench UI:
 npm run dev --workspace @optics/ui
 ```
 
-Neutral-atom explainer (`@optics/defense`) — local preview, or the [deployed guide](https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/):
+Personal site (CV, PhD visualization, catalog):
+
+```bash
+npm run dev --workspace @optics/site
+```
+
+Opens on [http://127.0.0.1:5300](http://127.0.0.1:5300). Production build is
+`npm run build --workspace @optics/site`. Embedded instruments live under
+`packages/site/public/` (`/defense/`, `/studio/`, `/orders/`, `/wine/`) and
+are snapshots — rebuild the source app with `--base=/<name>/` and copy
+`dist/` into `public/<name>/` to refresh.
+
+Neutral-atom walkthrough:
 
 ```bash
 npm run dev --workspace @optics/defense
 ```
+
+Opens on [http://127.0.0.1:5200](http://127.0.0.1:5200). Also served from the
+personal site at `/defense/` and deployed at
+[luke-mcevoy.github.io/neutral-atom-compute-visualizer](https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/).
+
+GitHub Pages (`.github/workflows/pages.yml`) currently deploys **Optics Studio
+(`@optics/ui`)** to the `/optics/` base path, not the personal site.
 
 ### Agent loop with local Ollama
 
