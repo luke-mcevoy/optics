@@ -169,3 +169,24 @@ and `npm run build --workspace @optics/ui`.
 **Key decisions / watch:** kept changes entirely in the UI layer and left
 kernel/bench/tools untouched; explanatory copy is muted and attached directly
 to existing values so it adds context without hiding the computed numbers.
+- 2026-08-31 21:25 — dispatched to cursor (composer-2.5): Implement Phase 1 (packages/agent tool-calling loop) of PLAN-AGENT-CHAT.md
+
+## 2026-08-31 — Cursor agent (Phase 1: packages/agent)
+
+**Done:** Added `@optics/agent` workspace package per PLAN-AGENT-CHAT.md Phase 1:
+`BenchSession` executor (bench injection, compact propagate/sweep summaries, error
+envelopes), `AGENT_TOOL_DEFINITIONS` JSON schemas (bench param omitted),
+`runAgentTurn` provider-agnostic loop (12-call cap, typed events), `OllamaChatProvider`
+(injected `fetchImpl`), and `SYSTEM_PROMPT` with grounding + SI-unit rules. Six
+Vitest tests with fakes (no network). Root `npm run typecheck` and `npm test` green
+(109 tests).
+
+**Key decisions:** Mutating tools return compact bench summaries, not full bench JSON;
+`sweep` truncated to 41 points with numeric measure maps; default Ollama model
+`qwen2.5:7b-instruct`; `FetchFn` interface avoids DOM lib in agent package.
+
+**Also:** Fixed missing `useRef` / `useFrame` imports in `packages/ui/src/lab/scene/Rays.tsx`
+so root typecheck passes (pre-existing lab WIP, not Phase 1 scope).
+
+**Unresolved / next:** Phase 2 — chat panel in UI, Vite `/ollama` proxy, wire
+`BenchSession` to App bench state.
