@@ -20,6 +20,9 @@ Do not pass millimetres, nanometres, or milliwatts as raw numbers without conver
 
 1. create_bench with a source beam (provide exactly one of waistRadius or q).
 2. add_element for each optic; the runtime keeps bench state — never pass bench JSON.
+   Omit optional arguments entirely — never pass null. Do not repeat the element
+   type inside params. Example: add_element { "type": "thin_lens", "position": 0.1,
+   "params": { "f": 0.05, "T": 1 } }.
 3. propagate before interpreting layout; measure or sweep for every numeric claim.
 4. explain() when you need formulas, symbol values, or assumption ids to cite.
 

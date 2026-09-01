@@ -75,4 +75,32 @@ describe('runAgentTurn', () => {
       content: 'The focused waist radius is available from measure().',
     });
   });
+
+  it('forces a final text-only reply when the tool budget is exhausted', async () => {
+    const toolTurn: ChatResponse = {
+      content: null,
+      toolCalls: [{ id: 'call', name: 'propagate', arguments: {} }],
+    };
+    const provider = new ScriptProvider([
+      toolTurn,
+      toolTurn,
+      { content: 'I ran out of tool budget; here is what I found so far.', toolCalls: [] },
+    ]);
+
+    const session = new BenchSession();
+    session.execute('create_bench', createBenchArgs());
+
+    const events: string[] = [];
+    const result = await runAgentTurn({
+      messages: [{ role: 'user', content: 'Propagate forever.' }],
+      provider,
+      session,
+      maxToolCalls: 2,
+      onEvent: (event) => events.push(event.type),
+    });
+
+    expect(result.toolCallCount).toBe(2);
+    expect(result.assistantText).toContain('tool budget');
+    expect(events.at(-1)).toBe('assistant_text');
+  });
 });

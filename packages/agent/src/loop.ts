@@ -70,6 +70,17 @@ export async function runAgentTurn(opts: RunAgentTurnOptions): Promise<RunAgentT
     }
   }
 
+  // Tool budget exhausted mid-conversation: force one final text-only reply so
+  // the user never gets a silent turn. Passing no tools prevents further calls.
+  if (assistantText === null) {
+    const finalResponse = await opts.provider.chat(messages, []);
+    assistantText = finalResponse.content ?? '';
+    if (assistantText.length > 0) {
+      emit(opts.onEvent, { type: 'assistant_text', content: assistantText });
+    }
+    messages = [...messages, { role: 'assistant', content: assistantText }];
+  }
+
   return { messages, assistantText, toolCallCount };
 }
 

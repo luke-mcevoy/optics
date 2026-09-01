@@ -178,9 +178,15 @@ const readSource = (args: Record<string, JsonValue>): Bench['source'] => {
   return source as unknown as Bench['source'];
 };
 
+// Small models pass `null` for optional params they don't want and sometimes
+// echo the element `type` inside params; both would poison the bench, so
+// strip them here rather than rejecting the whole call.
 const readParams = (value: JsonValue): Bench['elements'][number]['params'] => {
   if (value === undefined || value === null) return {};
-  return asObject(value, 'params') as Bench['elements'][number]['params'];
+  const raw = asObject(value, 'params');
+  return Object.fromEntries(
+    Object.entries(raw).filter(([key, entry]) => entry !== null && entry !== undefined && key !== 'type'),
+  ) as Bench['elements'][number]['params'];
 };
 
 const readAt = (value: JsonValue | undefined): { readonly z?: number; readonly elementId?: string } => {
@@ -229,7 +235,7 @@ const requiredString = (value: JsonValue, label: string): string => {
 };
 
 const optionalString = (value: JsonValue | undefined): string | undefined =>
-  value === undefined ? undefined : requiredString(value, 'id');
+  value === undefined || value === null ? undefined : requiredString(value, 'id');
 
 const requiredNumber = (value: JsonValue, label: string): number => {
   if (typeof value !== 'number' || !Number.isFinite(value)) throw new Error(`${label} must be a finite number`);

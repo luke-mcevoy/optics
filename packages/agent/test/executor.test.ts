@@ -72,6 +72,25 @@ describe('BenchSession', () => {
     }
   });
 
+  it('tolerates model noise: null optional args and echoed type inside params', () => {
+    const session = new BenchSession();
+    session.execute('create_bench', createBenchArgs());
+
+    const added = session.execute('add_element', {
+      id: null,
+      type: 'thin_lens',
+      position: 0,
+      params: { f: 0.05, T: 1, diameter: null, type: 'thin_lens' },
+    });
+    expect(added).toEqual({ ok: true, result: { elementCount: 1, elementIds: ['thin_lens_1'] } });
+
+    const element = session.getBench()?.elements[0];
+    expect(element?.params).toEqual({ f: 0.05, T: 1 });
+
+    const propagated = session.execute('propagate', {});
+    expect(propagated.ok).toBe(true);
+  });
+
   it('returns compact propagation and truncated sweep rows', () => {
     const session = new BenchSession();
     session.execute('create_bench', createBenchArgs());
