@@ -212,3 +212,18 @@ scenario goldens hand-commented from kernel literals, verified by deterministic
 **Unresolved / next:** Wire `auditClaims` into `runAgentTurn` post-turn hook and
 surface violations in UI; extend scenarios when Michelson / alignment-sensitivity
 tools land.
+- 2026-08-31 21:31 — dispatched to cursor (composer-2.5): GitHub Actions CI (typecheck + tests) for the monorepo
+
+## 2026-08-31 — Cursor agent (GitHub Actions CI)
+
+**Done:** Added `.github/workflows/ci.yml`: single job on `ubuntu-latest`, Node 22
+with npm cache, `npm ci`, then typecheck + Vitest for `@optics/kernel`,
+`@optics/bench`, `@optics/tools`, and `@optics/agent`. Triggers on push to
+`main` and all pull requests.
+
+**Key decisions:** Excluded `@optics/ui` — active lab WIP may not typecheck;
+kernel/bench/tools/agent (109+ tests) cover AGENTS.md Layer 1 correctness.
+Workspace names verified against each package's `name` field; no matrix.
+
+**Unresolved / next:** Add `@optics/ui` to CI once lab WIP lands; consider a
+separate UI build job later.

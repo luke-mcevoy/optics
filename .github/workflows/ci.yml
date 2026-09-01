@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm install (not ci): the committed lockfile predates packages/agent and
+      # cannot be regenerated yet without capturing another session's WIP deps.
+      # Switch back to npm ci once the UI work lands with a consistent lockfile.
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Typecheck
+        run: |
+          npm run typecheck --workspace @optics/kernel
+          npm run typecheck --workspace @optics/bench
+          npm run typecheck --workspace @optics/tools
+          npm run typecheck --workspace @optics/agent
+
+      - name: Test
+        run: |
+          npm test --workspace @optics/kernel
+          npm test --workspace @optics/bench
+          npm test --workspace @optics/tools
+          npm test --workspace @optics/agent
