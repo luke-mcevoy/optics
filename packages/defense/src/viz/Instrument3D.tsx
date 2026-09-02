@@ -640,8 +640,8 @@ function InstrumentScene({ clock }: { clock: RefObject<Clock> }) {
       <Plate position={READ.imgM1} normal={[-1, 0, 1]} />
       <Plate position={READ.dich} normal={[1, 0, -1]} color="#ff9ab8" opacity={0.6} label="dichroic (780 + 795)" />
       <Lens position={READ.lens} axis={[1, 0, 0]} />
-      <Plate position={READ.qwp} normal={[1, 0, 0]} color="#c9a0ff" opacity={0.6} size={[0.36, 0.36]} thickness={0.02} label="λ/4" />
-      <Plate position={READ.retro} normal={[1, 0, 0]} label="retro mirror (σ⁺ / σ⁻ pair)" />
+      <Plate position={READ.qwp} normal={[1, 0, 0]} color="#c9a0ff" opacity={0.6} size={[0.36, 0.36]} thickness={0.02} label="return-beam optics" />
+      <Plate position={READ.retro} normal={[1, 0, 0]} label="counter-propagating return (schematic)" />
       <BeamPath points={[[READ.latLaser[0] - 0.5, Y, READ.latLaser[2]], READ.latM1, READ.latM2, READ.dich, READ.lens, READ.cellIn]} radii={[0.035, 0.035, 0.035, 0.035, 0.035, 0.08]} color={C.lat795} gate={['lattice']} activity={activity} mode={2} k={30} />
       <BeamPath points={[READ.cellOut, READ.qwp, READ.retro]} radius={0.08} color={C.lat795} gate={['lattice']} activity={activity} mode={2} k={30} />
       <BeamPath points={[[READ.imgLaser[0] - 0.5, Y, READ.imgLaser[2]], READ.imgM1, READ.dich, READ.lens, READ.cellIn]} radii={[0.045, 0.045, 0.045, 0.045, 0.1]} color={C.img780} gate={['imaging']} activity={activity} k={10} speed={14} opacity={0.5} />
@@ -845,7 +845,7 @@ export function Instrument3D() {
         <>
           Every instrument the paper names, on one table, running one layer of a computation. The glass
           cell in the middle holds the atoms; above it the NA {PAPER.imaging.na} objective and the CMOS
-          camera. Six laser systems feed the cell: {PAPER.slm.wavelengthNm} nm trap light through the
+          camera. Seven laser colours feed the cell: {PAPER.slm.wavelengthNm} nm trap light through the
           SLM and the crossed AODs (back left), the Raman light for single-qubit gates (front right),{' '}
           {PAPER.rydberg.blueNm} and {PAPER.rydberg.irNm} nm Rydberg light from either side, the{' '}
           {PAPER.lattice.wavelengthNm} nm lattice and {PAPER.cooling.wavelengthNm} nm imaging light (back
@@ -877,8 +877,8 @@ export function Instrument3D() {
       label: TOUR[2]!.label,
       text: (
         <>
-          A run starts with a magneto-optical trap: the anti-Helmholtz coils and six {PAPER.cooling.wavelengthNm}{' '}
-          nm beams gather millions of rubidium atoms into a cloud in the cell. {PAPER.instruments.molasses}{' '}
+          A run starts with a magneto-optical trap: the anti-Helmholtz coils and the {PAPER.cooling.wavelengthNm}{' '}
+          nm MOT beams gather millions of rubidium atoms into a cloud in the cell. {PAPER.instruments.molasses}{' '}
           then cools them into the tweezers, and about {PAPER.loadingPct}% of the sites catch one atom. The
           camera takes a global picture through the objective: fluorescence climbs the detection column,
           passes the two dichroics that admit the trap and Raman light, and reaches the{' '}
@@ -898,8 +898,8 @@ export function Instrument3D() {
           onto the Raman laser, {PAPER.raman.intermediateDetuningGHz} GHz from the intermediate state so
           scattering is {PAPER.raman.scatteringPerPulse.toExponential(0)} per pulse. A PBS splits the light.
           The <em>global</em> arm fans out to cover the whole array (Ω ≈ 2π × {PAPER.raman.globalRabiMHz} MHz,
-          ~{PAPER.raman.compositeUs} μs composite pulses) — the dynamical-decoupling π pulse that fires
-          during every move. The <em>local</em> arm goes through a second pair of AODs, whose tone grid
+          ~{PAPER.raman.compositeUs} μs composite pulses) — also the dynamical-decoupling pulses that
+          echo away dephasing while atoms are moved and stored. The <em>local</em> arm goes through a second pair of AODs, whose tone grid
           picks rows and columns, up the periscope, past a compensating dichroic and half-wave plate that
           keep the polarization circular, and in through the objective to the chosen atoms for
           direct X(θ) rotations at {PAPER.raman.localFidelityPct}% fidelity.
@@ -928,10 +928,11 @@ export function Instrument3D() {
       text: (
         <>
           Reading a qubit without losing the atom takes three lasers on one line. First the{' '}
-          {PAPER.instruments.latticeLaser}, {PAPER.lattice.d1BlueGHz} GHz blue of D1, retro-reflected
-          through a quarter-wave plate to form a σ⁻ standing wave: one clock state is pinned by a ~
-          {PAPER.lattice.brightShiftMHz} MHz lightshift, the other is dark to it. A {PAPER.lattice.pumpNm}{' '}
-          nm pump co-propagating with one lattice port sorts the populations first. Then the AODs drag
+          {PAPER.instruments.latticeLaser}, {PAPER.lattice.d1BlueGHz} GHz blue of D1, split into two
+          counter-propagating σ⁻ beams (the return path is drawn schematically as a mirror) that form a
+          1D lattice: one stretched state is pinned by a ~{PAPER.lattice.brightShiftMHz} MHz lightshift,
+          the other is dark to it. A {PAPER.lattice.pumpNm} nm σ⁻ pump co-propagating with one lattice
+          port sorts the populations first. Then the AODs drag
           the dark atoms {PAPER.lattice.splitUm} μm sideways in {PAPER.lattice.splitUs} μs. Finally the{' '}
           {PAPER.cooling.wavelengthNm} nm imaging beams — counter-propagating σ⁺/σ⁻, detuned from each
           other by twice the Zeeman splitting so polarization-gradient cooling works in the finite
@@ -1007,7 +1008,7 @@ export function Instrument3D() {
           </>
         }
       >
-        <Panel tag="a" title="Six laser systems, two AOD pairs, an SLM, coils, camera, and the rack that plays them" wide>
+        <Panel tag="a" title="Seven laser colours, two AOD pairs, an SLM, coils, camera, and the rack that plays them" wide>
           <Stage3D
             tall
             rig={tour.rig}

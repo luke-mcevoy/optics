@@ -65,7 +65,7 @@ const PHASES: readonly Phase[] = [
     name: 'Decode',
     t0: 0.94,
     t1: 1,
-    text: 'Clicks and erasure flags go to the neural-network decoder; the correction is tracked in software as a Pauli frame — no corrective pulse needed. Then the next layer begins. In the deep-circuit runs one such layer took 41.9 ms, limited by desktop image processing.',
+    text: 'Clicks and erasure flags are recorded for the decoder, which runs after the experiment; corrections are applied as a software Pauli-frame update — no corrective pulse, and no live decoding, is needed for the next layer to begin. In the deep-circuit runs one such layer took 41.9 ms, limited by desktop image processing.',
   },
 ];
 

@@ -82,7 +82,7 @@ export const PHASES: readonly Phase[] = [
   {
     id: 'init',
     label: 'Initialize the qubits',
-    real: `optical pumping into the m_F = 0 clock states · bias field on (fields up to ${PAPER.cooling.bFieldG} G studied)`,
+    real: `optical pumping into the m_F = 0 clock states · ${PAPER.cooling.bFieldG} G bias field on (the paper's operating field)`,
     window: [0.28, 0.33],
   },
   {
@@ -130,7 +130,7 @@ export const PHASES: readonly Phase[] = [
   {
     id: 'decode',
     label: 'Decode',
-    real: 'camera frame → desktop → superchecks around lost atoms → MLE / machine-learning decoder',
+    real: 'camera frame → desktop; decoding and Pauli-frame feedforward are done in software after the run, not live',
     window: [0.87, 0.94],
   },
   {

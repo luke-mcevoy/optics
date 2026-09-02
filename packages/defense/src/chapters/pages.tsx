@@ -147,7 +147,7 @@ export const CHAPTERS: Chapter[] = [
         <Defense>
           <p>
             Encoding: 5S<sub>1/2</sub> hyperfine clock states, <Sym>m_F = 0</Sym>, splitting
-            6.8 GHz, <Sym>T<sub>2</sub> &gt; 1 s</Sym> (Methods). Global Raman rotations at
+            6.8 GHz, <Sym>T<sub>2</sub> &gt; 1 s</Sym> with dynamical decoupling (Methods). Global Raman rotations at
             ~{PAPER.raman.globalRabiMHz} MHz (~{PAPER.raman.compositeUs} μs composite pulses);
             local Raman through a second AOD pair. Entangling gate: 270 ns Rydberg CZ.
             “Logical qubit” later means many of these physical qubits tied together by a code.
@@ -415,14 +415,15 @@ export const CHAPTERS: Chapter[] = [
     id: 'control',
     num: '07',
     title: 'The whole instrument, and who plays it',
-    kicker: 'Six lasers, an SLM, two AOD pairs, coils, a camera — and five signal generators on one clock',
+    kicker: 'Seven laser colours, an SLM, two AOD pairs, coils, a camera — and five signal generators on one clock',
     body: (
       <>
         <Plain>
           <p>
-            Time to zoom out from the atoms to the room. On the table are six different laser
-            systems, each with a job: one holds the atoms, one nudges single qubits, two flash
-            together to entangle pairs, one sorts and photographs, one shields the memory. Between
+            Time to zoom out from the atoms to the room. On the table are seven different laser
+            colours, each with a job: one holds the atoms, one nudges single qubits, two flash
+            together to entangle pairs, one sorts the atoms for reading, one photographs them, one
+            shields the memory. Between
             the lasers and the atoms sit the modulators that shape and steer the light — a
             liquid-crystal panel that prints the trap pattern, crystals that bend beams with sound
             — plus magnetic coils, a microscope objective and a fast camera. Who conducts it all?
@@ -719,9 +720,10 @@ export const CHAPTERS: Chapter[] = [
           </p>
           <Assumption>
             “Below threshold” is this four-round circuit, not a published p_th.
-            Stim says the d=5/d=3 ratio can worsen ~15% at many rounds and ~10% with
-            one transversal gate per round. The toy p<sup>(d+1)/2</sup> card is not
-            Fig. 2d.
+            Simulation (Extended Data Fig. 8) says the ratio drops ~17% from 4 to 20 rounds
+            with a theory error model and ~9% from 4 to 50 rounds with the experimental one;
+            adding one transversal gate per round changes it by ~2% (an earlier theory study
+            put the threshold shift near 10%). The toy p<sup>(d+1)/2</sup> card is not Fig. 2d.
           </Assumption>
         </Defense>
       </>
@@ -803,12 +805,14 @@ export const CHAPTERS: Chapter[] = [
             called transversal. If those already included every rotation, a slightly
             wrong physical pulse would be a slightly wrong logical pulse — unprotected.
             That is the Eastin–Knill theorem. The way out is to allow measurement.
-            Some 3D codes have a transversal T (a 45° rotation). Prepare a block in
-            |T⟩, entangle, measure, feed forward: you teleport a Hadamard. The set
-            {' {H, T, CNOT} '} generates a dense subgroup of SU(2) — any single-qubit
-            rotation to exponential accuracy with a sequence whose length grows only
-            polylogarithmically in 1/ε (Solovay–Kitaev). You have a universal computer
-            made of digital pieces.
+            Some 3D codes have a transversal T (a 45° rotation); what they lack is the
+            Hadamard. So the Hadamard is teleported: a transversal CZ between the data
+            block and a fresh |+<sub>L</sub>⟩ block, an X-basis measurement, and a
+            feedforward correction leave H applied to the data. {'{H, T}'} generates a
+            dense subgroup of SU(2) — any single-qubit rotation to exponential accuracy
+            with a sequence whose length grows only polylogarithmically in 1/ε
+            (Solovay–Kitaev) — and with CNOT the set is universal. You have a universal
+            computer made of digital pieces.
           </p>
         </Primer>
         <MagicPlateau />
@@ -818,8 +822,8 @@ export const CHAPTERS: Chapter[] = [
             block is properly entangled and stabilizer signs are +1. 2D codes revive
             at 90°; bare qubits at 180°. |T_L⟩ is an eigenstate of
             (X<sup>⊗n</sup> + Y<sup>⊗n</sup>)/√2 — magic requires in-block
-            entanglement. Error-corrected CHSH: {PAPER.codes.chsh}, saturating
-            Tsirelson. Circuit is a stripped 15-to-1 distillation (inner surface
+            entanglement. Error-corrected CHSH: {PAPER.codes.chsh} (with error detection,
+            Extended Data Fig. 9f), saturating the Tsirelson bound 2√2 within error. Circuit is a stripped 15-to-1 distillation (inner surface
             codes replaced by physical qubits). Without feedforward the teleport
             randomly synthesizes 2<sup>N−1</sup> angles; they reconstructed N ≤ 3
             in software. Fig. 4a is a global-phase sweep, not optical spectroscopy.

@@ -736,8 +736,9 @@ export function Apparatus3D() {
           row by row from a single reservoir row, then the block is re-cooled and re-pumped in place.
           The imaging beams do not reach the reservoir, so its occupancy is tracked in software from the
           initial global picture. In the deepest runs the reservoir lasted {PAPER.deep.layers} layers,
-          about {PAPER.deep.circuitS} s — the current depth limit, and the reason continuous reloading is
-          the next step.
+          about {PAPER.deep.circuitS} s — it was sized to the {PAPER.deep.layers} layers the Raman AWG
+          memory holds, and together those set the current depth limit; continuous reloading and
+          waveform streaming are the next steps.
         </>
       ),
     },
