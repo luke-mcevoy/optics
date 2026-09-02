@@ -113,13 +113,20 @@ each quoted fragment appears verbatim in the paper text when `PAPER_TXT` is set.
 | --- | --- | --- | --- |
 | `beams.pairSpacingUm` | 2 | Not in this paper | Intra-pair gate spacing taken from the group’s earlier gate work (ref. 36, Evered et al. 2023). |
 
-## Standard atomic data used alongside the paper (5)
+## Standard atomic data used alongside the paper (12)
 
 | Quantity | Value | Source |
 | --- | --- | --- |
 | RB87.d2Nm | 780.241 nm | Steck, Rubidium 87 D Line Data |
 | RB87.d1Nm | 794.978 nm | Steck, Rubidium 87 D Line Data |
 | RB87.hyperfineHz | 6.834 682 610 904 GHz | Steck, Rubidium 87 D Line Data |
+| RB87_HFS.groundAHz | A_hfs(5S₁/₂)/h = 3.417 341 305 GHz (foundations) | Steck, Rubidium 87 D Line Data |
+| RB87_HFS.gJ | g_J(5S₁/₂) = 2.002 331 13 (foundations) | Steck, Rubidium 87 D Line Data |
+| RB87_HFS.gI | g_I = −0.000 995 141 4 (foundations) | Steck, Rubidium 87 D Line Data |
+| RB87_HFS.muBHzPerG | μ_B/h = 1.399 624 604 MHz/G (foundations) | CODATA via Steck |
+| RB87_HFS.d1Hz, d2Hz | 377.107 463 THz, 384.230 484 THz (foundations) | Steck, Rubidium 87 D Line Data |
+| RB87_HFS.p12OffsetsHz, p32OffsetsHz | 5P hyperfine offsets: F′=1,2: −509.05, +305.43 MHz; F′=0…3: −302.07, −229.85, −72.91, +193.74 MHz (foundations) | Steck, Rubidium 87 D Line Data |
+| clock shift 575.15 Hz/G² | (g_J − g_I)² μ_B² / 2ΔE_hfs (foundations) | Steck, Rubidium 87 D Line Data (derived; recomputed from Breit–Rabi in hyperfine.test.ts) |
 | quantum defects | δs = 3.131, δp = 2.648 | Li et al. 2003; Mack et al. 2011 |
 | C6 (70S) | C6/h ≈ 862 GHz·μm⁶, scaled as n*¹¹ | Bernien et al., Nature 551, 579 (2017) |
 

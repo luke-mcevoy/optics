@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Assumption, Claim, Note } from '../components/Claim.tsx';
 import { Eq, Sym } from '../components/Eq.tsx';
+import { Term } from '../components/Term.tsx';
 import { Defense, Plain, Primer } from '../components/Voice.tsx';
 import { PAPER } from '../data/paper.ts';
 import {
@@ -117,7 +118,11 @@ export const CHAPTERS: Chapter[] = [
             the in-between. The globe snaps to north or south, with odds set by where it was
             leaning. In this machine each globe is one atom — &ldquo;north vs south&rdquo; is its
             two closely spaced energy states (they differ in how the outer electron&rsquo;s spin
-            lines up with the nucleus) — and the turns are done with
+            lines up with the nucleus —{' '}
+            <Term to="rubidium-atom" tip="Foundations: inside the rubidium atom, from first principles">
+              explained from scratch here
+            </Term>
+            ) — and the turns are done with
             laser pulses. The animation below is exactly this: watch a pulse of light turn one
             atom&rsquo;s globe.
           </p>
@@ -141,14 +146,25 @@ export const CHAPTERS: Chapter[] = [
           <p>
             Why not use a spin in a magnetic field and call it a day? Because a magnetic moment
             precesses at a rate proportional to B. Field noise is a random rotation — decoherence.
-            The paper’s qubit is a <em>clock</em> transition: two states whose first-order Zeeman
+            The paper’s qubit is a{' '}
+            <Term to="rubidium-atom/clock" tip="Foundations: why the m_F = 0 pair is first-order immune to magnetic fields">
+              <em>clock</em> transition
+            </Term>
+            : two states whose first-order{' '}
+            <Term to="rubidium-atom/zeeman" tip="Foundations: the Zeeman effect on the ⁸⁷Rb ground state">
+              Zeeman
+            </Term>{' '}
             shifts cancel, so a few gauss of laboratory field does not smear the sphere.
           </p>
         </Primer>
         <BlochDrive />
         <Defense>
           <p>
-            Encoding: 5S<sub>1/2</sub> hyperfine clock states, <Sym>m_F = 0</Sym>, splitting
+            Encoding: 5S<sub>1/2</sub>{' '}
+            <Term to="rubidium-atom/ladder" tip="Foundations: gross, fine and hyperfine structure of the rubidium atom">
+              hyperfine
+            </Term>{' '}
+            clock states, <Sym>m_F = 0</Sym>, splitting
             6.8 GHz, <Sym>T<sub>2</sub> &gt; 1 s</Sym> with dynamical decoupling (Methods). Global Raman rotations at
             ~{PAPER.raman.globalRabiMHz} MHz (~{PAPER.raman.compositeUs} μs composite pulses);
             local Raman through a second AOD pair. Entangling gate: 270 ns Rydberg CZ.
@@ -177,7 +193,12 @@ export const CHAPTERS: Chapter[] = [
             information. Hit it with the right laser and it balloons out to several hundred
             times its size — big enough to make its presence felt by a neighbouring atom across
             the gap. Small means memory; puffed up means talking to the neighbours. The figure
-            below shows both sizes.
+            below shows both sizes. (Where exactly the two &ldquo;memory&rdquo; levels come from
+            inside that compact atom is a story of its own —{' '}
+            <Term to="rubidium-atom" tip="Foundations: inside the rubidium atom, from first principles">
+              told in Foundations
+            </Term>
+            .)
           </p>
         </Plain>
         <Primer>
@@ -194,8 +215,11 @@ export const CHAPTERS: Chapter[] = [
         <AtomLevels />
         <Defense>
           <p>
-            Nuclear spin <Sym>I = 3/2</Sym> splits 5S<sub>1/2</sub> into F = 1 and F = 2. The
-            qubit is |F=1, m_F=0⟩ ↔ |F=2, m_F=0⟩. The experiment runs at a finite bias field
+            Nuclear spin <Sym>I = 3/2</Sym> splits 5S<sub>1/2</sub> into F = 1 and F = 2 (
+            <Term to="rubidium-atom/spins" tip="Foundations: how two spins couple into F and m_F">
+              how F and m_F arise
+            </Term>
+            ). The qubit is |F=1, m_F=0⟩ ↔ |F=2, m_F=0⟩. The experiment runs at a finite bias field
             of 8.6 G — needed to resolve the Zeeman levels for qubit control and for imaging in
             the field — and the m_F = 0 clock states stay first-order insensitive to it. Their
             coherence in the 852 nm traps is 1–2 s <em>with dynamical decoupling</em> (T₂ &gt; 1 s);

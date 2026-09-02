@@ -1,7 +1,47 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { CHAPTERS } from './chapters/pages.tsx';
+import { FOUNDATIONS } from './foundations/registry.tsx';
+
+const FoundationsIndex = lazy(() =>
+  import('./foundations/FoundationsPage.tsx').then((m) => ({ default: m.FoundationsIndex })),
+);
+const FoundationPage = lazy(() =>
+  import('./foundations/FoundationsPage.tsx').then((m) => ({ default: m.FoundationPage })),
+);
+
+type Route = { kind: 'guide' } | { kind: 'foundations'; slug: string | undefined; section: string | undefined };
+
+/** `#/foundations/<slug>/<section>` routes to a foundations page; any other hash is the guide. */
+function parseRoute(hash: string): Route {
+  if (!hash.startsWith('#/')) return { kind: 'guide' };
+  const parts = hash.slice(2).split('/').filter((p) => p.length > 0);
+  if (parts[0] !== 'foundations') return { kind: 'guide' };
+  return { kind: 'foundations', slug: parts[1], section: parts[2] };
+}
+
+function useHashRoute(): Route {
+  const [route, setRoute] = useState<Route>(() => parseRoute(window.location.hash));
+  useEffect(() => {
+    const onChange = () => setRoute(parseRoute(window.location.hash));
+    window.addEventListener('hashchange', onChange);
+    return () => window.removeEventListener('hashchange', onChange);
+  }, []);
+  return route;
+}
 
 export function App() {
+  const route = useHashRoute();
+  if (route.kind === 'foundations') {
+    return (
+      <Suspense fallback={<div className="page route-loading" aria-busy="true" />}>
+        {route.slug === undefined ? <FoundationsIndex /> : <FoundationPage slug={route.slug} section={route.section} />}
+      </Suspense>
+    );
+  }
+  return <Guide />;
+}
+
+function Guide() {
   const [active, setActive] = useState(CHAPTERS[0]?.id ?? 'thesis');
 
   useEffect(() => {
@@ -20,6 +60,14 @@ export function App() {
     );
     for (const node of nodes) io.observe(node);
     return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    document.title = 'How to build a quantum computer out of atoms';
+    const id = window.location.hash.replace(/^#\/?/, '');
+    if (id.length > 0 && !id.includes('/')) {
+      requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }));
+    }
   }, []);
 
   useEffect(() => {
@@ -52,6 +100,7 @@ export function App() {
           Neutral-atom quantum computing<span>a guide for absolutely everyone</span>
         </p>
         <p className="mast-meta">
+          <a href="#/foundations">foundations</a> ·{' '}
           <a href="https://doi.org/10.1038/s41586-025-09848-5">the paper ↗</a>
         </p>
       </header>
@@ -101,6 +150,16 @@ export function App() {
               {ch.title}
             </a>
           ))}
+          <p className="toc-label toc-label-gap">Foundations</p>
+          {FOUNDATIONS.filter((f) => f.status === 'live').map((f) => (
+            <a key={f.slug} href={`#/foundations/${f.slug}`}>
+              <span className="toc-num">→</span>
+              {f.title}
+            </a>
+          ))}
+          <a href="#/foundations">
+            <span className="toc-num">≡</span>all foundations
+          </a>
         </nav>
 
         <article className="article">
@@ -115,7 +174,11 @@ export function App() {
               machine. <strong>Level 2</strong> explains the physics for the curious.{' '}
               <strong>Level 3</strong> reports exactly what the paper measured, with its numbers.
               The figures are interactive — drag the sliders, click the step buttons — and every
-              number on this page comes from the published paper.
+              number on this page comes from the published paper. Where the guide leans on a
+              piece of physics it does not derive — hyperfine structure, light shifts, Rydberg
+              atoms — dotted links lead to the{' '}
+              <a href="#/foundations">Foundations</a> pages, which build those concepts from
+              first principles with the same kind of live figures.
             </p>
           </section>
 

@@ -5,7 +5,7 @@ import { type ComponentType, lazy, Suspense } from 'react';
  * their own chunks so the article text paints first. Each placeholder is sized to the
  * board's measured desktop height so the page does not reflow when the chunk arrives.
  */
-function board(load: () => Promise<{ default: ComponentType }>, minHeight: number): ComponentType {
+export function board(load: () => Promise<{ default: ComponentType }>, minHeight: number): ComponentType {
   const Inner = lazy(load);
   return function LazyBoard() {
     return (
@@ -33,3 +33,9 @@ export const SpinToPosition = board(
   735,
 );
 export const SurfaceCode = board(() => import('./SurfaceCode.tsx').then((m) => ({ default: m.SurfaceCode })), 777);
+
+/* Foundations boards */
+export const CoupledSpins = board(
+  () => import('./foundations/CoupledSpins.tsx').then((m) => ({ default: m.CoupledSpins })),
+  980,
+);

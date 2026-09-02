@@ -117,6 +117,14 @@ Sixteen chapters, from the atom to a running fault-tolerant machine:
 
 The machine · What a qubit is · The atom · Light is the toolbox · How two atoms talk · How you hold a hundred atoms · How you move them mid-circuit · Who plays the lasers · Four rooms, one processor · How you read a bit and keep the atom · Why one atom is not a computer · Proof that bigger is quieter · Doing logic on a coded bit · Every rotation you might want · Running without heating up · What would make it a computer
 
+### Foundations
+
+The guide explains a machine; it is not the place to derive hyperfine structure or the AC Stark shift. Those concepts live in a separate set of pages at [`#/foundations`](https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/#/foundations), built from first principles in the same three levels with the same kind of live figures. Dotted links in the guide (`hyperfine↗`) jump to the relevant section. Nothing on those pages is from the paper — it is standard atomic and quantum physics with the source stated (Steck's *Rubidium 87 D Line Data*, CODATA), and every derived number is recomputed live and covered by tests.
+
+Available: **Inside the rubidium atom** — the level ladder zoomed from optical (384 THz) through fine (7.1 THz) and hyperfine (6.83 GHz) structure; a 3D vector model of how the nuclear and electron spins couple into F and precess about a field to give m_F; the exact Breit–Rabi fan of the eight ground sublevels with the 575.15 Hz/G² clock-state curvature; and a Ramsey dephasing picture that turns the 8.6 G field sensitivity into a memory time (a clock qubit keeps its phase ~71× longer than an m_F = ±1 qubit under the same field noise).
+
+Planned, in dependency order: a qubit physically · what light does to an atom · cooling and seeing atoms · Rydberg atoms · entanglement and two-qubit gates · why error correction can work at all.
+
 ---
 
 ## Scientific accuracy
@@ -136,7 +144,7 @@ If you find a number that does not trace to the paper or to a stated formula, it
 ### Checked, not just asserted
 
 - **Claims ledger.** [`docs/CLAIMS.md`](docs/CLAIMS.md) lists every constant in `src/data/paper.ts` with the section of the paper that states it and a verbatim fragment. It is generated from `src/data/provenance.ts` (`npm run ledger`), and a test fails if any constant lacks an entry. With `PAPER_TXT=/path/to/paper.txt npm test` (a `pdftotext` dump of the open-access PDF, not redistributed here), the suite also checks that every quoted fragment really appears in the paper.
-- **Physics tests.** `npm test` runs golden tests against closed-form results: Rayleigh limit and collection fraction for NA 0.65, Gaussian-beam z_R and w(z), blockade-radius scaling, the Rb 5s radius from the quantum defect and the ≈700× 53S/5s ratio, hydrogenic normalisation and node counts, and the two-atom blockade integrator (probability conservation; P_rr = sin⁴(Ωt/2) without interaction; √2 Ω collective oscillation and <1 % double excitation deep in blockade). The run program behind Fig. 8 is checked for phase tiling and for hardware constraints such as the two Rydberg colours always firing together.
+- **Physics tests.** `npm test` runs golden tests against closed-form results: Rayleigh limit and collection fraction for NA 0.65, Gaussian-beam z_R and w(z), blockade-radius scaling, the Rb 5s radius from the quantum defect and the ≈700× 53S/5s ratio, hydrogenic normalisation and node counts, and the two-atom blockade integrator (probability conservation; P_rr = sin⁴(Ωt/2) without interaction; √2 Ω collective oscillation and <1 % double excitation deep in blockade). The run program behind Fig. 8 is checked for phase tiling and for hardware constraints such as the two Rydberg colours always firing together. The Foundations hyperfine module is checked against Steck: zero-field Breit–Rabi reproduces the F = 1, 2 energies, Landé g_F ≈ ±½, the 0.70 MHz/G and 1.40 MHz/G linear slopes, the 575.15 Hz/G² clock coefficient (and 42.5 kHz at 8.6 G), the traceless Zeeman sum over all eight sublevels at any field, and the Paschen–Back limit.
 
 ---
 

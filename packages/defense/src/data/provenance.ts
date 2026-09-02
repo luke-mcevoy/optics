@@ -133,6 +133,13 @@ export const STANDARD_VALUES: readonly Provenance[] = [
   { path: 'RB87.d2Nm', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: '780.241 nm' },
   { path: 'RB87.d1Nm', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: '794.978 nm' },
   { path: 'RB87.hyperfineHz', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: '6.834 682 610 904 GHz' },
+  { path: 'RB87_HFS.groundAHz', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: 'A_hfs(5S₁/₂)/h = 3.417 341 305 GHz (foundations)' },
+  { path: 'RB87_HFS.gJ', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: 'g_J(5S₁/₂) = 2.002 331 13 (foundations)' },
+  { path: 'RB87_HFS.gI', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: 'g_I = −0.000 995 141 4 (foundations)' },
+  { path: 'RB87_HFS.muBHzPerG', where: 'CODATA via Steck', quote: '', kind: 'standard', note: 'μ_B/h = 1.399 624 604 MHz/G (foundations)' },
+  { path: 'RB87_HFS.d1Hz, d2Hz', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: '377.107 463 THz, 384.230 484 THz (foundations)' },
+  { path: 'RB87_HFS.p12OffsetsHz, p32OffsetsHz', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: '5P hyperfine offsets: F′=1,2: −509.05, +305.43 MHz; F′=0…3: −302.07, −229.85, −72.91, +193.74 MHz (foundations)' },
+  { path: 'clock shift 575.15 Hz/G²', where: 'Steck, Rubidium 87 D Line Data (derived; recomputed from Breit–Rabi in hyperfine.test.ts)', quote: '', kind: 'standard', note: '(g_J − g_I)² μ_B² / 2ΔE_hfs (foundations)' },
   { path: 'quantum defects', where: 'Li et al. 2003; Mack et al. 2011', quote: '', kind: 'standard', note: 'δs = 3.131, δp = 2.648' },
   { path: 'C6 (70S)', where: 'Bernien et al., Nature 551, 579 (2017)', quote: '', kind: 'standard', note: 'C6/h ≈ 862 GHz·μm⁶, scaled as n*¹¹' },
 ];
