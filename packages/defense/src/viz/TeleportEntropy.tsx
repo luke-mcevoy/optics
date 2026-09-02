@@ -44,7 +44,7 @@ export function TeleportEntropy() {
     ctx.fillRect(40, 220, 80 / (1 + layer * 0.7), 12);
     ctx.fillStyle = '#7d8b99';
     ctx.fillText('physical error correlations decay after teleportation', 40, 254);
-  });
+  }, true, ref);
 
   return (
     <div className="board">

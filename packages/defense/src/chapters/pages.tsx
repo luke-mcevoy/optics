@@ -3,25 +3,27 @@ import { Assumption, Claim, Note } from '../components/Claim.tsx';
 import { Eq, Sym } from '../components/Eq.tsx';
 import { Defense, Plain, Primer } from '../components/Voice.tsx';
 import { PAPER } from '../data/paper.ts';
-import { AODShuttle } from '../viz/AODShuttle.tsx';
-import { Apparatus3D } from '../viz/Apparatus3D.tsx';
+import {
+  AODShuttle,
+  Apparatus3D,
+  AtomLevels,
+  Instrument3D,
+  MachineCycle,
+  Processor,
+  RamanStark,
+  RydbergBlockade,
+  SLMHologram,
+  SpinToPosition,
+  SurfaceCode,
+} from '../viz/lazy.tsx';
 import { CameraMeasurement } from '../viz/CameraMeasurement.tsx';
-import { AtomLevels } from '../viz/AtomLevels.tsx';
 import { BelowThreshold } from '../viz/BelowThreshold.tsx';
 import { BlochDrive } from '../viz/BlochDrive.tsx';
 import { BlockadeDynamics } from '../viz/BlockadeDynamics.tsx';
 import { CodePrimer } from '../viz/CodePrimer.tsx';
-import { MachineCycle } from '../viz/MachineCycle.tsx';
 import { LogicAndMagic } from '../viz/LogicAndMagic.tsx';
 import { MagicPlateau } from '../viz/MagicPlateau.tsx';
-import { Instrument3D } from '../viz/Instrument3D.tsx';
-import { Processor } from '../viz/Processor.tsx';
 import { QubitPrimer } from '../viz/QubitPrimer.tsx';
-import { RamanStark } from '../viz/RamanStark.tsx';
-import { RydbergBlockade } from '../viz/RydbergBlockade.tsx';
-import { SLMHologram } from '../viz/SLMHologram.tsx';
-import { SpinToPosition } from '../viz/SpinToPosition.tsx';
-import { SurfaceCode } from '../viz/SurfaceCode.tsx';
 import { TeleportEntropy } from '../viz/TeleportEntropy.tsx';
 
 export type Chapter = {

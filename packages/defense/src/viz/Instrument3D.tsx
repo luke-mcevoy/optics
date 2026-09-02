@@ -730,7 +730,7 @@ function RackTimeline({ clock, onScrub }: { clock: RefObject<Clock>; onScrub: (u
     if (canvas === null || c === null) return;
     const TL_W = Math.max(480, Math.floor(wrap.current?.clientWidth ?? 900));
     widthRef.current = TL_W;
-    const ctx = sizeCanvas(canvas, TL_W, TL_H);
+    const ctx = sizeCanvas(canvas, TL_W, TL_H, true);
     clear(ctx, TL_W, TL_H);
     const width = TL_W - TL_LEFT - 12;
     const x = (u: number) => TL_LEFT + u * width;
@@ -779,7 +779,7 @@ function RackTimeline({ clock, onScrub }: { clock: RefObject<Clock>; onScrub: (u
     ctx.fillStyle = '#7d8b99';
     ctx.font = '10px "IBM Plex Mono", monospace';
     ctx.fillText(c.playing ? 'click the timeline to scrub · space to play/pause' : 'paused · click to scrub · space to play', 8, TL_H - 3);
-  });
+  }, true, wrap);
   return (
     <div ref={wrap} className="rack-strip">
       <canvas

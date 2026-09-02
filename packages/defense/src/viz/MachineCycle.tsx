@@ -113,6 +113,7 @@ export function MachineCycle() {
   const [t, setT] = useState(0.02);
   const [playing, setPlaying] = useState(true);
   const lastRef = useRef<number | null>(null);
+  const host = useRef<HTMLDivElement>(null);
 
   useRaf((nowMs) => {
     const last = lastRef.current;
@@ -120,7 +121,7 @@ export function MachineCycle() {
     if (!playing || last === null) return;
     const dt = Math.min(0.05, (nowMs - last) / 1000);
     setT((prev) => (prev + dt / CYCLE_S) % 1);
-  });
+  }, true, host);
 
   const phaseIdx = Math.max(
     0,
@@ -129,6 +130,7 @@ export function MachineCycle() {
   const phase = PHASES[phaseIdx] ?? PHASES[0];
 
   return (
+    <div ref={host} className="board-host">
     <Figure
       n="9"
       title="One layer of the machine's cycle, as choreography"
@@ -189,6 +191,7 @@ export function MachineCycle() {
         </p>
       </Panel>
     </Figure>
+    </div>
   );
 }
 

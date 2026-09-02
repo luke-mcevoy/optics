@@ -655,7 +655,7 @@ article p em { font-style: italic; color: inherit; }
   flex: 0 0 auto;
   min-width: 54px;
 }
-.rack-strip { flex: 1 1 auto; min-width: 0; }
+.rack-strip { flex: 1 1 auto; min-width: 0; overflow-x: auto; }
 .rack-timeline {
   border: 1px solid var(--line);
   background: #0c0d0e;
@@ -843,4 +843,28 @@ article p em { font-style: italic; color: inherit; }
   .board-grid, .holo-row, .nfig-grid { grid-template-columns: 1fr; }
   .npanel-wide { grid-column: auto; }
   .stage3d { height: 340px; }
+  .stage3d.tall, .npanel .stage3d.tall, .board-breakout .stage3d.tall { height: 440px; }
+  .stage3d-hint { display: none; }
+  .steps button, .rack-play { min-height: 40px; }
+  .board-loading { min-height: 60vh !important; }
+  .callout { font-size: 9px; padding: 1px 4px; }
+  .callout-small { font-size: 8px; }
+  .stage3d > .stage-phase { left: 10px; right: 10px; font-size: 11px; }
+}
+
+/* Coarse pointers: no hover, larger hit targets. */
+@media (pointer: coarse) {
+  .stage3d-hint { display: none; }
+}
+
+/* Deferred WebGL boards: placeholder before the chunk arrives / before the canvas mounts. */
+.board-loading {
+  background: #0c0d0e;
+  border: 1px solid var(--line);
+}
+.board-host { display: block; }
+.stage3d-idle {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 60%, #101216 0%, #0c0d0e 70%);
 }

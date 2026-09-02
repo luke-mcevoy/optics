@@ -44,7 +44,7 @@ export function BlochDrive() {
     const canvas = canvasRef.current;
     if (canvas === null) return;
     draw(canvas, thetaRef.current);
-  });
+  }, true, canvasRef);
 
   const theta = thetaRef.current;
   const tUs = (theta / OMEGA) * 1e6;

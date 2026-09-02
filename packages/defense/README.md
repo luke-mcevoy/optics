@@ -133,6 +133,11 @@ The text was audited line by line against the main text and Methods. Two things 
 
 If you find a number that does not trace to the paper or to a stated formula, it is a bug — please open an issue.
 
+### Checked, not just asserted
+
+- **Claims ledger.** [`docs/CLAIMS.md`](docs/CLAIMS.md) lists every constant in `src/data/paper.ts` with the section of the paper that states it and a verbatim fragment. It is generated from `src/data/provenance.ts` (`npm run ledger`), and a test fails if any constant lacks an entry. With `PAPER_TXT=/path/to/paper.txt npm test` (a `pdftotext` dump of the open-access PDF, not redistributed here), the suite also checks that every quoted fragment really appears in the paper.
+- **Physics tests.** `npm test` runs golden tests against closed-form results: Rayleigh limit and collection fraction for NA 0.65, Gaussian-beam z_R and w(z), blockade-radius scaling, the Rb 5s radius from the quantum defect and the ≈700× 53S/5s ratio, hydrogenic normalisation and node counts, and the two-atom blockade integrator (probability conservation; P_rr = sin⁴(Ωt/2) without interaction; √2 Ω collective oscillation and <1 % double excitation deep in blockade). The run program behind Fig. 8 is checked for phase tiling and for hardware constraints such as the two Rydberg colours always firing together.
+
 ---
 
 ## Run locally
@@ -164,7 +169,7 @@ The public site is **GitHub Pages**, rebuilt automatically on every push to `mai
 | --- | --- |
 | URL | https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/ |
 | Repo | https://github.com/luke-mcevoy/neutral-atom-compute-visualizer |
-| Workflow | `.github/workflows/pages.yml` — install, typecheck, Vite build, `actions/deploy-pages` |
+| Workflow | `.github/workflows/pages.yml` — install, typecheck, test, Vite build, `actions/deploy-pages` |
 | Pages source | **GitHub Actions** (repo Settings → Pages) |
 
 After a push, the new build is live within a couple of minutes. If 3D figures ever look clipped into a corner, hard-refresh (Cmd+Shift+R); the canvases must fill their panels, not size themselves with `height: auto`.

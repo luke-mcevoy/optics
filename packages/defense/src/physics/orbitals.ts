@@ -65,7 +65,10 @@ export function radialR(nPhys: number, l: number, r: number): number {
   const pref = Math.sqrt(
     (2 / nStruct) ** 3 * (factorial(nStruct - l - 1) / (2 * nStruct * factorial(nStruct + l))),
   );
-  return pref * Math.exp(-rho / 2) * rho ** l * laguerre(nStruct - l - 1, 2 * l + 1, rho);
+  // scale^(-3/2) keeps ∫ r² R² dr = 1 after stretching the radius to (n*)².
+  return (
+    pref * scale ** -1.5 * Math.exp(-rho / 2) * rho ** l * laguerre(nStruct - l - 1, 2 * l + 1, rho)
+  );
 }
 
 function sampleMu(l: number, m: number, u: number): number {

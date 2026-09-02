@@ -1,9 +1,21 @@
-export function sizeCanvas(canvas: HTMLCanvasElement, cssW: number, cssH: number): CanvasRenderingContext2D {
+/**
+ * Size a 2D canvas for a `cssW × cssH` drawing surface at device resolution. By default the
+ * element may shrink below `cssW` on narrow screens (keeping its aspect ratio); pass
+ * `fixed` when pointer coordinates must map 1:1 onto drawing coordinates.
+ */
+export function sizeCanvas(
+  canvas: HTMLCanvasElement,
+  cssW: number,
+  cssH: number,
+  fixed = false,
+): CanvasRenderingContext2D {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.round(cssW * dpr);
   canvas.height = Math.round(cssH * dpr);
   canvas.style.width = `${cssW}px`;
-  canvas.style.height = `${cssH}px`;
+  canvas.style.height = fixed ? `${cssH}px` : 'auto';
+  canvas.style.maxWidth = fixed ? 'none' : '100%';
+  canvas.style.aspectRatio = fixed ? '' : `${cssW} / ${cssH}`;
   const ctx = canvas.getContext('2d');
   if (ctx === null) throw new Error('2d context unavailable');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
