@@ -145,9 +145,12 @@ export function RydbergBlockade() {
         <>
           What happens instead: the pair shares <em>one</em> excitation and oscillates at the
           enhanced rate √2 Ω — watch that emerge from the Schrödinger equation in the next
-          figure. Drive a 2π pulse in this blockaded regime and the pair returns to where it
-          started but with a conditional π phase: a controlled-Z gate. The paper runs it in
-          270 ns at ~99.6% fidelity.
+          figure. That rate mismatch is the gate: under one global pulse, |01⟩ and |10⟩ cycle
+          at Ω while |11⟩ cycles at √2 Ω, so the branches pick up different phases. A plain 2π
+          pulse does not close both loops (the |11⟩ branch has area 2√2 π), which is why the
+          paper uses a single time-optimal pulse with a shaped laser phase (its ref. 36) that
+          brings every branch home with exactly a conditional π: a controlled-Z in 270 ns at
+          ~99.6% fidelity.
         </>
       ),
     },

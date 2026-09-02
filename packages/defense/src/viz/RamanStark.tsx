@@ -166,8 +166,9 @@ export function RamanStark() {
           bottom. Driving that microwave gap directly with light is impossible — so two lasers
           build a bridge. The cyan beam takes the atom <em>toward</em> the 5P excited state, the
           gold beam brings it back down into |1⟩. Crucially, they meet at a <em>virtual</em>{' '}
-          level a distance Δ below the real 5P line: the atom rotates from |0⟩ to |1⟩ without
-          ever actually visiting 5P.
+          level a distance Δ from the real 5P line (drawn below it here — the paper gives only
+          |Δ| = 550 GHz, so the side is a drawing convention): the atom rotates from |0⟩ to |1⟩
+          without ever actually visiting 5P.
         </>
       ),
     },
@@ -191,8 +192,9 @@ export function RamanStark() {
           (Ω₁ ≠ Ω₂). Each beam also Stark-shifts the level it touches, and unequal beams shift
           |0⟩ and |1⟩ differently: δ<sub>AC</sub> = (Ω₁² − Ω₂²)/4Δ. That looks exactly like a
           fake magnetic field along z — a phase error accumulating on every atom the beam
-          grazes. Balancing the legs, and composite pulses like SCROFULOUS, is how the paper
-          cancels it.
+          grazes. The paper&rsquo;s answers are a larger Δ (550 GHz now, 2.5 THz proposed) and
+          composite pulses like SCROFULOUS that are robust to the residual shift; balancing
+          the legs is the textbook knob shown here.
         </>
       ),
     },

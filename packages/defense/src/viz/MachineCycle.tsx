@@ -29,7 +29,7 @@ const PHASES: readonly Phase[] = [
     name: 'Hold',
     t0: 0,
     t1: 0.1,
-    text: 'Data qubits (gold) and a fresh block of ancillas (cyan) sit in storage under the 1,529 nm shield; hyperfine T₂ > 1 s. Nothing touches them.',
+    text: 'Data qubits (gold) and a fresh block of ancillas (cyan) sit in storage under the 1,529 nm shield; hyperfine T₂ > 1 s with dynamical decoupling. Nothing else touches them.',
   },
   {
     name: 'Interleave',

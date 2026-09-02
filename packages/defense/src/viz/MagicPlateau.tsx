@@ -91,8 +91,9 @@ export function MagicPlateau() {
             Steane code also at 90° (its transversal S); the 3D Reed–Muller code also at 45°,
             which is a transversal T — a non-Clifford gate. The measured curves, including the
             requirement that all stabilizer signs be +1 for the 45° plateau to appear, are in the
-            paper; the raw data and decoding notebook are public on Zenodo
-            (doi:10.5281/zenodo.15685795).
+            paper. The public Zenodo record (doi:10.5281/zenodo.15685795) covers only the
+            surface-code repeated-QEC data; the paper says everything else is available from the
+            corresponding author on request.
           </>
         }
       >

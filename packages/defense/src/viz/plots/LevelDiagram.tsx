@@ -16,7 +16,7 @@ export function LevelDiagram({ mode, n }: { mode: Mode; n: number }) {
       </text>
       <Level y={188} label="5s  |F=1,2; m_F=0⟩  qubit" active={sOn} color="#6ea8d4" />
       <Level y={148} label="5p  D1/D2  (imaging, Raman)" active={pOn} color="#d4a24a" />
-      <Level y={88} label="virtual 5P  (Raman Δ ~ 550 GHz)" active={false} color="#5c5c60" dashed />
+      <Level y={166} label="virtual level  (Raman, |Δ| ≈ 550 GHz from 5P; drawn below)" active={false} color="#5c5c60" dashed />
       <Level y={36} label={`n = ${n} Rydberg  (CZ)`} active={rydOn} color="#b08ad6" />
       {sOn && !rydOn && <Arrow x={90} y1={188} y2={148} color="#6ea8d4" />}
       {pOn && <Arrow x={150} y1={188} y2={148} color="#d4a24a" />}

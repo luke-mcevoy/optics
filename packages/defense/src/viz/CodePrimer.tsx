@@ -16,10 +16,10 @@ export function CodePrimer() {
         three physical copies → majority vote
       </text>
       <text x="300" y="70" fill="#c9a0ff" fontSize="12" fontFamily="IBM Plex Mono, monospace">
-        |0_L⟩ = |00000…⟩ + |11111…⟩
+        |+_L⟩ = |00000…⟩ + |11111…⟩
       </text>
       <text x="300" y="96" fill="#8ec8ff" fontSize="12" fontFamily="IBM Plex Mono, monospace">
-        |1_L⟩ = |00000…⟩ − |11111…⟩
+        |−_L⟩ = |00000…⟩ − |11111…⟩  (example: |0_L⟩ = |000…⟩)
       </text>
       <text x="300" y="140" fill="#9a8f7a" fontSize="12" fontFamily="IBM Plex Sans, sans-serif">
         You never look at one atom’s 0/1. You look at

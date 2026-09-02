@@ -47,7 +47,8 @@ export const CHAPTERS: Chapter[] = [
             each held in place by a pinpoint of laser light. To compute, they poke the atoms with
             flashes of light; to read out the answer, they photograph them. The catch is that
             atoms are terrible at remembering — left alone, they scramble in a fraction of a
-            second. So the real achievement is not making atoms compute. It is building a machine
+            second, and even when constantly nudged back into line they last only a second or
+            two. So the real achievement is not making atoms compute. It is building a machine
             that catches and fixes the atoms&rsquo; mistakes faster than the mistakes pile up.
             This guide walks through how you would build one, piece by piece.
           </p>
@@ -59,8 +60,9 @@ export const CHAPTERS: Chapter[] = [
             does the same three things. The state is stored in the internal energy levels of
             rubidium atoms. The operations are pulses of laser light. The hard part — the reason
             this is a Nature paper and not a freshman lab — is that those energy levels are
-            analog, fragile, and continuously leaking heat into the vacuum. The machine has to
-            <em> throw entropy out </em> while it computes, or the calculation dissolves.
+            analog, fragile, and continuously soaking up noise from their surroundings. The
+            machine has to <em> throw entropy out </em> while it computes, or the calculation
+            dissolves.
           </p>
           <p>
             The figures below are the argument, not decoration. Captions name what is drawn.
@@ -191,8 +193,11 @@ export const CHAPTERS: Chapter[] = [
         <Defense>
           <p>
             Nuclear spin <Sym>I = 3/2</Sym> splits 5S<sub>1/2</sub> into F = 1 and F = 2. The
-            qubit is |F=1, m_F=0⟩ ↔ |F=2, m_F=0⟩. Finite field 8.6 G for pumping; clock
-            states stay first-order quiet. Optical workhorse lines: D2 780.241 nm, D1 794.978 nm
+            qubit is |F=1, m_F=0⟩ ↔ |F=2, m_F=0⟩. The experiment runs at a finite bias field
+            of 8.6 G — needed to resolve the Zeeman levels for qubit control and for imaging in
+            the field — and the m_F = 0 clock states stay first-order insensitive to it. Their
+            coherence in the 852 nm traps is 1–2 s <em>with dynamical decoupling</em> (T₂ &gt; 1 s);
+            left undriven they dephase far faster. Optical workhorse lines: D2 780.241 nm, D1 794.978 nm
             (standard values; the paper assumes them). The Rydberg climb is a different pair:
             420 nm + 1013 nm to n = {PAPER.rydberg.n}.
           </p>
@@ -292,8 +297,9 @@ export const CHAPTERS: Chapter[] = [
             overlap; you need the pair-state energy to miss the laser. Drive the pair with a
             pulse designed for isolated atoms and the blocked pair picks up a different phase
             than two independent atoms would: a conditional phase, a CZ gate. (The textbook
-            version is a 2π pulse; the paper uses a single time-optimal pulse — same blockade,
-            shorter.)
+            version is the Jaksch π–2π–π sequence, which needs each atom addressed separately;
+            with one global pulse a plain 2π does not close, so the paper uses a single
+            time-optimal pulse with a shaped laser phase — same blockade, one pulse, 270 ns.)
           </p>
         </Primer>
         <RydbergBlockade />
@@ -305,7 +311,10 @@ export const CHAPTERS: Chapter[] = [
             loss (partner sees a dark atom, gate off); hyperfine leakage (6 MHz vs 4.6 MHz
             Ω); Rydberg-P leftovers (~0.07%, &gt;100 μs) that blockade later gates. Waiting
             100 μs instead of 4 μs between benchmarking pulses takes CZ from 99.3% to 99.5%.
-            Surface-code motion already waits ~400 μs, so the avalanche converts to loss.
+            Surface-code motion already waits several hundred μs, by which time a leftover
+            Rydberg atom has either decayed to the ground state or been expelled from the
+            tweezer — landing as a computational-subspace error, a hyperfine leakage, or a
+            loss, rather than the many-body &ldquo;avalanche&rdquo; errors seen in dense arrays.
           </p>
           <Assumption>
             The slider’s C₆ = n¹¹ and “CZ phase” are a unitless toy. They are not 53S
@@ -450,12 +459,18 @@ export const CHAPTERS: Chapter[] = [
           </p>
           <p>
             Five Spectrum AWGs, &lt;{PAPER.control.jitterNs} ns sync. Deep circuits
-            {` ${PAPER.deep.circuitS} `} s. Moving / Rydberg / Raman-AOD loop one layer;
-            Raman IQ cannot loop without breaking the 6.8 GHz phase, so they fill AWG
-            memory — that, not lifetime, caps Fig. 6 at {PAPER.deep.layers} layers.
-            A QEC round is 4.45 ms (2.57 ms of that is swapping ancillas). A teleportation
-            layer is 41.9 ms, bottlenecked by desktop image analysis. The 4 ms Rabi cycle
-            on 200 atoms is the speed-of-physics existence proof.
+            {` ${PAPER.deep.circuitS} `} s. The whole waveform for every AWG except
+            rearrangement is uploaded before the run; Moving, Rydberg and Raman-AOD loop one
+            memory segment per layer. Looping the Raman IQ channel is complicated by the need
+            to keep the 6.8 GHz phase continuous, so for simplicity the paper programs that
+            waveform whole — it fills the AWG memory, and that is what caps Fig. 6 at{' '}
+            {PAPER.deep.layers} layers; the reservoir is then sized to feed exactly that many
+            layers, which is why chapter 08 can equally say the run ends when the reservoir
+            empties. The paper names waveform streaming as the fix. A QEC round is 4.45 ms
+            (2.57 ms of that is swapping ancillas). A teleportation layer is 41.9 ms,
+            bottlenecked by desktop image analysis. The 4 ms cycle in Fig. 5b (repeated Rabi
+            calibration on ~200 atoms) used global imaging as a fast-calibration demonstration;
+            the paper expects similar speeds to be reachable in zoned operation.
           </p>
         </Defense>
       </>
@@ -497,8 +512,11 @@ export const CHAPTERS: Chapter[] = [
             blocks, Rydberg tophats ~1% over 60 μm, 40 μm dark gap. Deep-circuit: 256
             atoms entangling on 8×16 over 175 μm; 128-atom readout; 196-atom reservoir;
             shield waist matched to 35 μm of storage. Loading 75% by D1 grey molasses,
-            then AOD compaction. Fig. 6 ends when the reservoir empties — occupancy of
-            the reservoir is tracked in software because imaging does not cover it.
+            then AOD compaction. Fig. 6 ends when the reservoir empties — its occupancy is
+            taken from one global image before the circuit and then tracked in software,
+            because the local imaging beams do not cover it. The reservoir was sized to match
+            the 27 layers that fit in the Raman AWG memory (chapter 07), so the two depth
+            limits are the same number seen from two sides.
           </p>
         </Defense>
       </>
@@ -561,7 +579,7 @@ export const CHAPTERS: Chapter[] = [
         </Primer>
         <SpinToPosition />
         <CameraMeasurement />
-        <Eq label="geometric collection of an air objective, and the Rayleigh length on the camera">
+        <Eq label="geometric collection of an air objective, and the Rayleigh resolution limit on the camera">
           η = (1 − cos θ)/2, &nbsp; θ = arcsin(NA), &nbsp; d = 0.61 λ / NA
         </Eq>
         <Defense>
@@ -581,9 +599,12 @@ export const CHAPTERS: Chapter[] = [
           </p>
           <Assumption>
             Photon counts on the camera board are a teaching Poisson model. The paper
-            does not publish photoelectrons per frame. NA, λ, camera, 2 μm split, and
-            the 0.46(4)% / 0.24(2)% errors are paper numbers. Collection η ignores
-            coatings and quantum efficiency.
+            shows a site-averaged imaging histogram (Extended Data Fig. 3c) but quotes no
+            photoelectrons-per-frame number, and the &ldquo;two regions of interest, occupied /
+            empty / both-empty&rdquo; description above is our reading of the method, not a
+            procedure the paper spells out. NA, λ, camera, 2 μm split, and the 0.46(4)% /
+            0.24(2)% errors are paper numbers. Collection η ignores coatings and quantum
+            efficiency.
           </Assumption>
         </Defense>
       </>
@@ -634,8 +655,9 @@ export const CHAPTERS: Chapter[] = [
         </Primer>
         <Defense>
           <p>
-            Surface code: 2D lattice, X- and Z-type plaquettes, used in Figs. 1–3.
-            Colour codes appear later for magic ({PAPER.codes.steane},{' '}
+            Surface code: 2D lattice, X- and Z-type plaquettes, used in Figs. 1–3 (run as the
+            XZZX rotated variant — Y(π/2) on one data sublattice makes it equivalent to the
+            CSS rotated surface code, Extended Data Fig. 6c). Colour codes appear later for magic ({PAPER.codes.steane},{' '}
             {PAPER.codes.reedMuller}) and high-rate blocks ({PAPER.codes.tesseract}).
             Atom loss is an erasure if you detect it: a distance-d code corrects
             (d−1)/2 unknown Paulis but up to d−1 known-location erasures. They detect
@@ -687,7 +709,9 @@ export const CHAPTERS: Chapter[] = [
             tuned) plus a net trained on 200 million {'{0,1,loss}'} shots, ensembled,
             fine-tuned, geometric-mean confidences 0.4 / 1. Result: 0.62(3)% LEPR at
             d=5 vs 1.33(4)% at d=3 — {PAPER.qec.belowThreshold}({PAPER.qec.belowThresholdUnc})×,
-            no postselection. Loss+ML is a 1.73(13)× win over bare methods. No-loss
+            no postselection. Loss information plus machine learning is a 1.73(13)× win over a
+            bare MLE that reads lost atoms as |0⟩ (the MLE alone gains 1.24(5) → 1.69(8) in the
+            d=3/d=5 ratio from loss information). No-loss
             shots fall toward ~0.1% LEPR (p³-ish; ~half the budget is loss). &gt;80%
             of leakage is atom loss. Global coherent injections Zeno-project; logical
             coherent piece is exponentially small in d. Detector histogram matches
@@ -911,8 +935,10 @@ export const CHAPTERS: Chapter[] = [
             smaller.
           </p>
           <p className="cite">
-            {PAPER.cite}. Open access, DOI {PAPER.doi}. Lukin, Vuletić, Greiner,
-            Yelin, Cain, and the Harvard–MIT Center for Ultracold Atoms.
+            {PAPER.cite}; published online 10 November 2025. Open access, DOI {PAPER.doi}.
+            First authors Dolev Bluvstein and Alexandra A. Geim; senior authors Madelyn Cain
+            and Mikhail D. Lukin, with Susanne F. Yelin, Markus Greiner, Vladan Vuletić and
+            Michael J. Gullans — Harvard, MIT and collaborators.
           </p>
         </Defense>
       </>

@@ -50,7 +50,7 @@ export function TeleportEntropy() {
     <div className="board">
       <canvas ref={ref} width={W} height={H} />
       <p className="board-cap">
-        Transversal teleportation is both a logical gate and a leakage-reduction unit. The paper keeps 32 Steane blocks, then [[16,6,4]] blocks, at constant detector error until the reservoir empties.
+        Transversal teleportation is a logical gate that also does the job of a leakage-reduction unit — physical leakage and loss are left behind in the measured block, without pairing each data qubit with its own ancilla. For 32 Steane blocks the paper shows the stabilizer error staying constant layer after layer (Fig. 6b); for [[16,6,4]] blocks it shows physical-error correlations dying off within a few layers while logical correlations persist — until the reservoir empties.
       </p>
     </div>
   );

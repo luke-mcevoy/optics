@@ -70,13 +70,13 @@ This is an **unofficial** explainer of a **published** article. It is not affili
 <p align="center">
   <img src="docs/apparatus-move.png" alt="A block of 128 atoms in AOD tweezers gliding from storage into the entangling zone" />
   <br />
-  <em><strong>Fig. 1, “The processor, drawn in light.”</strong> The whole machine at one scale (1 unit = 20 μm): four zones sized from the paper’s Methods, ~500 atoms, each held in an 852 nm Gaussian tweezer whose hourglass is w(z) = w₀√(1 + (z/z_R)²). Here a block of 128 atoms in cyan AOD traps glides from storage into the entangling zone.</em>
+  <em><strong>Fig. 1, “The processor, drawn in light.”</strong> The whole machine at one scale (1 unit = 20 μm): four zones sized from the paper’s Methods, ~500 atoms drawn (the reservoir is shown full, so slightly more than the paper’s maximum of 448), each held in an 852 nm Gaussian tweezer whose hourglass is w(z) = w₀√(1 + (z/z_R)²). Here a block of 128 atoms in cyan AOD traps glides from storage into the entangling zone.</em>
 </p>
 
 <p align="center">
   <img src="docs/apparatus-flash.png" alt="Rydberg flash on one gate site with the blockade sphere" />
   <br />
-  <em>Close-up on one gate site during the 270 ns CZ: the two atoms 2 μm apart, the 420 + 1013 nm sheets sweeping through, and the blockade radius R_b = (C₆/ħΩ)^{1/6} ≈ 4.4 μm — swallowing the partner, missing the next site 11 μm over.</em>
+  <em>Close-up on one gate site during the 270 ns CZ: the two atoms 2 μm apart (a spacing inherited from the group’s earlier gate paper, not restated in this one), the 420 + 1013 nm sheets sweeping through, and the blockade radius R_b = (C₆/ħΩ)^{1/6} ≈ 4.4 μm — swallowing the partner, missing the next site 11 μm over.</em>
 </p>
 
 <p align="center">

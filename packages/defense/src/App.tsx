@@ -62,9 +62,9 @@ export function App() {
           <p className="based-on">
             Based on: Bluvstein, D., Geim, A.A., Li, S.H. et al. A fault-tolerant neutral-atom
             architecture for universal quantum computation. <em>Nature</em> <strong>649</strong>,
-            39–46 (2026) ·{' '}
+            39–46 (2026), published online 10 November 2025 ·{' '}
             <a href="https://doi.org/10.1038/s41586-025-09848-5">doi:10.1038/s41586-025-09848-5</a>{' '}
-            · Harvard–MIT (Lukin group and collaborators)
+            · Harvard, MIT and collaborators (Lukin group)
           </p>
 
           <aside className="provenance" role="note">

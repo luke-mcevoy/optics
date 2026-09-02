@@ -253,7 +253,7 @@ function ApparatusScene({
     let zoneA: 'sto' | 'ent' | 'ro' = 'sto';
     let zoneB: 'sto' | 'ent' | 'ro' = 'sto';
     let f = 0;
-    let phase = 'holding in storage · T₂ > 1 s';
+    let phase = 'holding in storage · T₂ > 1 s (with decoupling)';
     if (u < W.holdStore[1]) {
       zoneA = zoneB = 'sto';
     } else if (u < W.moveIn[1]) {
@@ -651,7 +651,8 @@ export function Apparatus3D() {
       label: TOUR[1]!.label,
       text: (
         <>
-          Zoomed onto one gate site: two atoms {PAPER.beams.pairSpacingUm} μm apart, each pinned at
+          Zoomed onto one gate site: two atoms {PAPER.beams.pairSpacingUm} μm apart (a spacing
+          this paper inherits from its ref. 36 rather than restating), each pinned at
           the focus of an {PAPER.slm.wavelengthNm} nm beam. The hourglass is not decoration — it is
           the Gaussian envelope w(z) = w₀√(1 + (z/z_R)²) drawn to scale for an assumed waist w₀ ={' '}
           {TWEEZER_W0_UM} μm (the paper does not quote it), giving z_R = πw₀²/λ ={' '}
@@ -753,8 +754,13 @@ export function Apparatus3D() {
             Zone dimensions, atom counts, beam waists, wavelengths and durations are the paper&rsquo;s
             (Methods: system overview, deep-circuit configuration, spin-to-position conversion,
             shielding beam). Drawn assumptions: tweezer waist 1 μm; blockade radius from a literature
-            C₆ scaling; objective and camera placed 60 μm above the atoms rather than millimetres;
-            lattice period exaggerated 8×; photon speed and count are illustrative. Colours are display
+            C₆ scaling; the {PAPER.beams.pairSpacingUm} μm spacing inside a gate pair, which this
+            paper does not quote and which comes from the group&rsquo;s earlier gate work (its
+            ref. 36); the ~{SITE_PITCH_UM.toFixed(0)} μm gate-site pitch, which is our 175 μm ÷ 16
+            columns; the drawn atom total, which exceeds the paper&rsquo;s maximum of {PAPER.atoms}
+            because the reservoir is shown full; objective and camera placed 60 μm above the atoms
+            rather than millimetres; lattice period exaggerated 8×; photon speed and count are
+            illustrative. Colours are display
             conventions — 1013 and 1529 nm are invisible infrared. Orbit freely; each step re-aims
             the camera.
           </>

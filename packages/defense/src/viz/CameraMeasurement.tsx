@@ -86,7 +86,7 @@ export function CameraMeasurement() {
             light drives the cycling transition; a 0.65-NA objective (Methods) collects a geometric
             fraction (1 − cos θ)/2 of 4π onto a Hamamatsu ORCA-Quest.{' '}
             <strong>b</strong>, One toy exposure. Spots are Gaussians whose 1/e² radius equals the
-            Rayleigh length 0.61 λ/NA; a real image is an Airy disk. Dots are a Poisson draw, not
+            Rayleigh resolution limit 0.61 λ/NA; a real image is an Airy disk. Dots are a Poisson draw, not
             a published photon budget — the paper does not report counts per frame.{' '}
             <strong>c</strong>, Software sums two regions of interest. Occupied / empty / both-empty
             is |0⟩ / |1⟩ / loss. The {PAPER.lattice.bitFlipPct}% bit-flip in Fig. 1b is dominated by
@@ -281,7 +281,7 @@ function Frame(props: {
         call {labelOf(props.call)}
       </text>
       <text x="340" y="180" textAnchor="end" fill="#8b8680" fontSize="10">
-        {props.splitUm.toFixed(1)} μm · Rayleigh {props.rayleighUm.toFixed(2)} μm
+        {props.splitUm.toFixed(1)} μm · Rayleigh limit {props.rayleighUm.toFixed(2)} μm
       </text>
     </svg>
   );

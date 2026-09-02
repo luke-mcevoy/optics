@@ -86,7 +86,7 @@ export function AtomLevels() {
         <>
           Both states drawn at one shared scale in panel <strong>b</strong>. The ground-state
           atom is the blue spark at the centre of the violet Rydberg cloud. This size contrast
-          is the whole trick: in the ground state, atoms 2 μm apart ignore each other; excited
+          is the whole trick: in the ground state, atoms a couple of microns apart ignore each other; excited
           to n = {n}, they shift each other&rsquo;s energies strongly enough to block a laser.
         </>
       ),

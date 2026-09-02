@@ -6,7 +6,7 @@ import { Steps, type StepDef } from '../components/Steps.tsx';
 const STAGES = [
   { label: 'ML decoder, ensembled', d3: [1.37, 0.03], d5: [0.78, 0.04] },
   { label: '+ fine-tuned on experiment', d3: [1.33, 0.04], d5: [0.71, 0.04] },
-  { label: '+ loss info, hybrid ML + MLE', d3: [1.33, 0.04], d5: [0.62, 0.03] },
+  { label: '+ hybrid with erasure MLE', d3: [1.33, 0.04], d5: [0.62, 0.03] },
 ] as const;
 
 const NO_LOSS_PCT = 0.1;
@@ -41,10 +41,14 @@ export function BelowThreshold() {
       text: (
         <>
           Read left to right: the atoms never change, only the software interpreting the
-          parity checks does. Ensembling neural decoders, fine-tuning them on experimental
-          shots, and finally folding in atom-loss (erasure) information with a hybrid
-          maximum-likelihood decoder takes d = 5 from 0.78(4)% to 0.62(3)% per round. The
-          final d = 5 / d = 3 ratio is 2.14(13)× — the paper&rsquo;s headline number.
+          parity checks does. Every stage already sees atom loss — the network&rsquo;s input is
+          one-hot {'{0, 1, lost}'} per measurement. Ensembling neural decoders, fine-tuning them on
+          experimental shots, and finally combining their confidence with a delayed-erasure
+          maximum-likelihood decoder (geometric mean, weights 0.4 : 1) takes d = 5 from
+          0.78(4)% to 0.62(3)% per round. The final d = 5 / d = 3 ratio is 2.14(13)× — the
+          paper&rsquo;s headline number. The separate 1.73(13)× that the paper credits to
+          &ldquo;loss information and machine learning&rdquo; is measured against a bare MLE
+          decoder that reads every lost atom as |0⟩.
         </>
       ),
     },
@@ -72,8 +76,10 @@ export function BelowThreshold() {
             Logical error per round (LEPR) for d = 3 and d = 5 surface codes over a four-round
             characterization circuit, for three stages of the same decoding pipeline. All values
             and 1σ uncertainties are stated in the paper&rsquo;s Methods (ensembled machine
-            learning: 1.37(3)% / 0.78(4)%; fine-tuned: 1.33(4)% / 0.71(4)%; hybrid with loss
-            information, as reported in Fig. 2d: 1.33(4)% / 0.62(3)%, ratio 2.14(13)×). Dashed
+            learning: 1.37(3)% / 0.78(4)%; fine-tuned: 1.33(4)% / 0.71(4)%; hybrid with the
+            delayed-erasure MLE decoder, as reported in Fig. 2d: 1.33(4)% / 0.62(3)%, ratio
+            2.14(13)×). All three stages use loss information; the bare-MLE baseline that gives
+            the paper&rsquo;s 1.73(13)× is not drawn. Dashed
             line: d = 5 shots with no detected atom loss approach ~0.1% per round. This chart
             redraws stated numbers; it is not a re-analysis of the released dataset.
           </>

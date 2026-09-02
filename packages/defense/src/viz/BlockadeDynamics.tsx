@@ -104,7 +104,7 @@ export function BlockadeDynamics() {
           {maxRr.toFixed(3)} — and the pair oscillates between |gg⟩ and the shared single
           excitation |W⟩ at the enhanced rate √2 Ω. That missing |rr⟩ amplitude is the
           blockade; the conditional phase the pair picks up instead is the CZ gate. The paper
-          drives at Ω<sub>Ryd</sub> = {PAPER.rydberg.rabiMHz} MHz with atoms ~2 μm apart, where
+          drives at Ω<sub>Ryd</sub> = {PAPER.rydberg.rabiMHz} MHz with atoms ~2 μm apart (the pair spacing of its ref. 36; this paper does not restate it), where
           V/Ω is far beyond the top of this slider — deeper into blockade than shown here.
         </>
       }

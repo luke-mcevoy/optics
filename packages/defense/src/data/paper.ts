@@ -60,6 +60,7 @@ export const PAPER = {
     latticeWaistUm: 60,
     shieldWaistUm: [35, 65] as const,
     rydbergTophatUm: 60,
+    /** Not stated in this paper; the intra-pair gate spacing from Evered et al. 2023 (ref. 36). */
     pairSpacingUm: 2,
   },
   lattice: {
