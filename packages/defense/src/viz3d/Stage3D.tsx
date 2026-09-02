@@ -68,6 +68,7 @@ export function Stage3D({
   maxDistance = 18,
   tall = false,
   overlay,
+  fogRange = [10, 26],
 }: {
   children: ReactNode;
   caption?: string;
@@ -83,6 +84,8 @@ export function Stage3D({
   tall?: boolean;
   /** Extra DOM drawn over the canvas (e.g. a phase label). */
   overlay?: ReactNode;
+  /** Near/far distances of the background fog; widen for table-scale scenes. */
+  fogRange?: readonly [number, number];
 }) {
   return (
     <div className="board-stage">
@@ -94,7 +97,7 @@ export function Stage3D({
         <Canvas
           dpr={[1, 2]}
           resize={{ scroll: false, debounce: 0 }}
-          camera={{ fov: 38, position: rig ? [...rig.position] : camera, near: 0.05, far: 80 }}
+          camera={{ fov: 38, position: rig ? [...rig.position] : camera, near: 0.05, far: 120 }}
           gl={{
             antialias: true,
             toneMapping: THREE.ACESFilmicToneMapping,
@@ -103,7 +106,7 @@ export function Stage3D({
           style={{ width: '100%', height: '100%', display: 'block' }}
         >
           <color attach="background" args={['#07080b']} />
-          <fog attach="fog" args={['#07080b', 10, 26]} />
+          <fog attach="fog" args={['#07080b', fogRange[0], fogRange[1]]} />
           <ambientLight intensity={0.12} />
           <spotLight position={[6, 10, 4]} intensity={18} angle={0.5} penumbra={1} color="#f2e4c4" />
           <pointLight position={[-4, 2, -3]} intensity={8} color="#5ec8e5" />

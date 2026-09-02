@@ -34,7 +34,9 @@ site: CV, live PhD visualization (`/phd`), catalog of other work, and
 embedded static instruments at `/defense/`, `/studio/`, `/orders/`, `/wine/`.
 
 **Neutral-atom walkthrough** (`@optics/defense`) — chaptered explainer of
-Bluvstein, Geim et al., *Nature* **649**, 39–46 (2026), with live boards.
+Bluvstein, Geim et al., *Nature* **649**, 39–46 (2026), with live 3D boards —
+including the whole optical table (every laser, AOD, SLM, coil, camera and AWG
+the paper names) animated through one layer of a computation.
 
 Not built: `optimize()` tool, Michelson interferometer elements, vendor catalogs.
 

@@ -90,6 +90,21 @@ export const PAPER = {
     waistUm: '35 × 65',
     lightshiftGHz: 6,
   },
+  /** Named hardware from Methods (“system overview”, readout, shielding sections). */
+  instruments: {
+    cell: 'glass vacuum cell; MOT of millions of ⁸⁷Rb atoms',
+    molasses: 'D1 Λ-enhanced grey molasses',
+    slm: 'Hamamatsu X13138-02',
+    aod: 'AA Opto-Electronic DTSX-400, crossed pair',
+    objective: 'Special Optics, NA 0.65',
+    camera: 'Hamamatsu ORCA-Quest C15550-20UP (CMOS)',
+    microwave: 'Rohde & Schwarz SMW200A, 6.8 GHz',
+    awg: 'Spectrum Instrumentation, five AWGs',
+    latticeLaser: 'M Squared titanium:sapphire, 795 nm',
+    shieldLaser: 'Connet CoSF-D 10 W fibre laser, 1529 nm',
+    ramanLocal: 'second 2D AOD pair; dichroic pair + λ/2 for polarization',
+    shieldShaping: '4f relay with knife-edge ~4 waists from centre',
+  },
   control: {
     awgs: 5,
     vendor: 'Spectrum Instrumentation',

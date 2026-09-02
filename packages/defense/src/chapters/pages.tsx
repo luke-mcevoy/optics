@@ -14,8 +14,8 @@ import { CodePrimer } from '../viz/CodePrimer.tsx';
 import { MachineCycle } from '../viz/MachineCycle.tsx';
 import { LogicAndMagic } from '../viz/LogicAndMagic.tsx';
 import { MagicPlateau } from '../viz/MagicPlateau.tsx';
+import { Instrument3D } from '../viz/Instrument3D.tsx';
 import { Processor } from '../viz/Processor.tsx';
-import { PulseRack } from '../viz/PulseRack.tsx';
 import { QubitPrimer } from '../viz/QubitPrimer.tsx';
 import { RamanStark } from '../viz/RamanStark.tsx';
 import { RydbergBlockade } from '../viz/RydbergBlockade.tsx';
@@ -405,20 +405,24 @@ export const CHAPTERS: Chapter[] = [
   {
     id: 'control',
     num: '07',
-    title: 'Who plays the lasers',
-    kicker: 'No CPU — the program is a synchronized recording played at the atoms',
+    title: 'The whole instrument, and who plays it',
+    kicker: 'Six lasers, an SLM, two AOD pairs, coils, a camera — and five signal generators on one clock',
     body: (
       <>
         <Plain>
           <p>
-            Who conducts all of this? Not a processor issuing instructions one at a time. The
-            whole program — every trap movement, every gate flash, every globe rotation — is
-            composed in advance as a set of electrical waveforms, like the tracks of a
-            multi-track music recording, and played out through five synchronized signal
-            generators locked to a single clock. If two tracks slip against each other by even a
-            few billionths of a second, the &ldquo;note&rdquo; played on the atoms becomes a
-            different, wrong operation. The program here is less like software and more like a
-            player-piano roll for lasers.
+            Time to zoom out from the atoms to the room. On the table are six different laser
+            systems, each with a job: one holds the atoms, one nudges single qubits, two flash
+            together to entangle pairs, one sorts and photographs, one shields the memory. Between
+            the lasers and the atoms sit the modulators that shape and steer the light — a
+            liquid-crystal panel that prints the trap pattern, crystals that bend beams with sound
+            — plus magnetic coils, a microscope objective and a fast camera. Who conducts it all?
+            Not a processor issuing instructions one at a time. The whole program is composed in
+            advance as a set of electrical waveforms, like the tracks of a multi-track recording,
+            and played through five synchronized signal generators. If two tracks slip by a few
+            billionths of a second, the &ldquo;note&rdquo; played on the atoms becomes a different,
+            wrong operation. Press play below and watch one layer of a computation run through
+            every box on the table.
           </p>
         </Plain>
         <Primer>
@@ -427,11 +431,23 @@ export const CHAPTERS: Chapter[] = [
             multi-channel analog waveform: trap-move voltages, Rydberg envelopes, Raman
             I and Q, local-addressing tones. If those channels disagree by tens of
             nanoseconds, the gate is a different Hamiltonian. The “compiler” is a rack of
-            arbitrary-waveform generators sharing one clock.
+            arbitrary-waveform generators sharing one clock, and the “instruction set” is which
+            beam path is open: every physical qubit in a block sees the same light, so one
+            waveform is one logical-block operation.
           </p>
         </Primer>
-        <PulseRack />
+        <Instrument3D />
         <Defense>
+          <p>
+            Hardware (Methods, system overview): {PAPER.instruments.slm} SLM; {PAPER.instruments.aod}{' '}
+            for moving traps and a second pair for local Raman; {PAPER.instruments.objective} objective
+            onto a {PAPER.instruments.camera}; {PAPER.instruments.microwave}; {PAPER.instruments.latticeLaser}{' '}
+            for the lattice; {PAPER.instruments.shieldLaser}. Raman at {PAPER.raman.intermediateDetuningGHz}{' '}
+            GHz intermediate detuning ({PAPER.raman.scatteringPerPulse.toExponential(0)} scattering per
+            SCROFULOUS pulse); Rydberg {PAPER.rydberg.blueNm} nm red-detuned {PAPER.rydberg.intermediateDetuningGHz}{' '}
+            GHz from 5P. Extended Data Fig. 1a is the real layout; Fig. 8 is a reconstruction from the
+            text.
+          </p>
           <p>
             Five Spectrum AWGs, &lt;{PAPER.control.jitterNs} ns sync. Deep circuits
             {` ${PAPER.deep.circuitS} `} s. Moving / Rydberg / Raman-AOD loop one layer;

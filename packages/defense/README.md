@@ -38,6 +38,30 @@ This is an **unofficial** explainer of a **published** article. It is not affili
 ## Demo
 
 <p align="center">
+  <img src="docs/instrument-table.png" alt="The whole optical table running one layer of the computation, with the synchronized AWG timeline underneath" />
+  <br />
+  <em><strong>Fig. 8, “The whole instrument, running one layer.”</strong> Every piece of hardware the paper names, on one table, playing one layer of a quantum computation: the 852 nm trap laser split between the Hamamatsu SLM and the crossed AA Opto-Electronic AODs; the Raman laser, IQ modulator and Rohde &amp; Schwarz 6.8 GHz source; the 420 + 1013 nm Rydberg lasers from either side; the M Squared 795 nm lattice and 780 nm imaging light; the 10 W 1529 nm shield; MOT and bias coils; the NA-0.65 objective and ORCA-Quest camera; and the rack of five Spectrum AWGs whose pulses run down the cables. A box glows only while it fires. The timeline below is the same program the 3D scene is playing — scrub it, and a nine-step tour re-aims the camera at each subsystem.</em>
+</p>
+
+<p align="center">
+  <img src="docs/instrument-holding.png" alt="The 852 nm trap arm: PBS, SLM hologram, crossed AODs, recombination and periscope" />
+  <br />
+  <em>Holding the atoms: one 852 nm laser, a polarizing beam-splitter, the SLM writing the static array as a hologram, the crossed AOD pair making the movable traps, recombined and sent up the periscope to the objective.</em>
+</p>
+
+<p align="center">
+  <img src="docs/instrument-raman.png" alt="Raman light for single-qubit gates: global arm and the second AOD pair for local addressing" />
+  <br />
+  <em>Single-qubit gates: the Raman laser’s global arm covering the array and the local arm through a second 2D AOD pair, compensating dichroic and half-wave plate, while the Raman AWG writes the light grid.</em>
+</p>
+
+<p align="center">
+  <img src="docs/instrument-rydberg.png" alt="The entangling flash: 420 nm and 1013 nm counter-propagating into the cell" />
+  <br />
+  <em>The entangling flash: 420 nm and 1013 nm light counter-propagating into the cell for the 270 ns CZ, gated by the Rydberg AWG.</em>
+</p>
+
+<p align="center">
   <img src="docs/apparatus-move.png" alt="A block of 128 atoms in AOD tweezers gliding from storage into the entangling zone" />
   <br />
   <em><strong>Fig. 1, “The processor, drawn in light.”</strong> The whole machine at one scale (1 unit = 20 μm): four zones sized from the paper’s Methods, ~500 atoms, each held in an 852 nm Gaussian tweezer whose hourglass is w(z) = w₀√(1 + (z/z_R)²). Here a block of 128 atoms in cyan AOD traps glides from storage into the entangling zone.</em>
@@ -80,7 +104,7 @@ This is an **unofficial** explainer of a **published** article. It is not affili
 A long-form article you can operate.
 
 - **Three reading levels** in every section: plain English for everyone, the physics for the curious, and exactly what the paper measured.
-- **Live figures:** the full processor and every laser beam in it as a guided 3D tour, 3D |ψ|² clouds, an animated Bloch sphere you drive with laser pulses, integrated two-atom blockade dynamics, a scrubbable machine cycle, SLM holograms, AOD shuttling, surface-code patches, the below-threshold bar chart, the 45° magic-state plateau.
+- **Live figures:** the whole optical table — every laser, modulator, coil, camera and signal generator the paper names — animated through one layer of a computation with a synchronized instrument timeline; the processor and every beam in it at true scale as a guided 3D tour; 3D |ψ|² clouds, an animated Bloch sphere you drive with laser pulses, integrated two-atom blockade dynamics, a scrubbable machine cycle, SLM holograms, AOD shuttling, surface-code patches, the below-threshold bar chart, the 45° magic-state plateau.
 - **Grounded claims:** 448 atoms, n = 53, 270 ns CZ, 2.14(13)× lower error at d = 5 than d = 3 on a four-round circuit — each tagged to a figure or Methods line.
 
 Sixteen chapters, from the atom to a running fault-tolerant machine:
@@ -96,6 +120,8 @@ Everything on screen is one of three things, and the captions say which:
 1. **A paper number.** Atom counts, zone dimensions, wavelengths, beam waists, gate time, detunings, fidelities, error rates, durations, decoder details. Each carries a figure or Methods tag. These live in one file, `src/data/paper.ts`, so they can be audited against the article in one sitting.
 2. **A computation from a stated formula.** Gaussian-beam envelopes (z_R = πw₀²/λ), the fluorescence collection fraction ((1 − cos θ)/2 for NA = sin θ), Rabi and light-shift scalings, the two-atom blockade Schrödinger integration, quantum-defect orbital radii (n* = n − δ_ℓ with the standard Rb defects). Code in `src/physics/`.
 3. **A drawn assumption**, always labelled. The ones that matter: the tweezer waist (1 μm; the paper does not quote it), the blockade radius (C₆ from the published n*¹¹ scaling anchored on Rb 70S — not a paper value), the objective and camera placed 60 μm above the atoms instead of millimetres, an 8× exaggerated lattice period, illustrative photon speeds and counts, and display colours for infrared beams.
+
+   For the instrument table (Fig. 8): the **component list, wavelengths, detunings, durations, fidelities and which AWG drives what** are the paper’s (Methods: system overview, spin-to-position conversion, 1D imaging and cooling, the 1,529 nm shielding beam, local single-qubit gates; Extended Data Fig. 1b). The **layout of the table, beam routing, component sizes and the pacing of the animated run** are a schematic reconstruction from the text — the paper’s Extended Data Fig. 1a is the real optical layout. The run program lives in `src/data/program.ts`; each phase carries the paper fact it is standing in for, and the phase label on the stage shows it while that phase plays.
 
 The text was audited line by line against the main text and Methods. Two things the earlier draft got wrong and this version fixes, in case you compared: the surface-code benchmark parks used ancilla blocks in storage and reads them all out at the end (“delayed erasure”) rather than measuring every round — per-layer measure-and-reuse is the deep-circuit architecture of Figs. 5–6; and the Rb 5s ground-state radius is set by a quantum defect (n* ≈ 1.87), so the Rydberg atom is ~700× larger, not the hydrogenic ~100× or a round “thousand”.
 
