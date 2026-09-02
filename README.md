@@ -38,6 +38,12 @@ Bluvstein, Geim et al., *Nature* **649**, 39â€“46 (2026), with live 3D boards â€
 including the whole optical table (every laser, AOD, SLM, coil, camera and AWG
 the paper names) animated through one layer of a computation.
 
+<p align="center">
+  <img src="packages/defense/docs/instrument-demo.gif" alt="The neutral-atom explainer's optical table running one layer of a computation" width="720" />
+  <br />
+  <em>Live at <a href="https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/#control">luke-mcevoy.github.io/neutral-atom-compute-visualizer</a>.</em>
+</p>
+
 Not built: `optimize()` tool, Michelson interferometer elements, vendor catalogs.
 
 ## Packages

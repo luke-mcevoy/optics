@@ -38,6 +38,12 @@ This is an **unofficial** explainer of a **published** article. It is not affili
 ## Demo
 
 <p align="center">
+  <img src="docs/instrument-demo.gif" alt="The optical table running one layer of a computation: the guided tour steps through holding, loading, single-qubit gates, the entangling flash and readout while the instrument timeline plays" />
+  <br />
+  <em>The instrument playing one layer of a computation, live. Each tour step re-aims the camera at one subsystem — trap SLM + AODs, loading and the first picture, Raman single-qubit gates, the 420 + 1013 nm entangling flash, readout, and inside the cell — while the timeline underneath shows which AWG channel and laser is on. <a href="https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/#control">Open it live</a> to orbit, scrub and step through yourself.</em>
+</p>
+
+<p align="center">
   <img src="docs/instrument-table.png" alt="The whole optical table running one layer of the computation, with the synchronized AWG timeline underneath" />
   <br />
   <em><strong>Fig. 8, “The whole instrument, running one layer.”</strong> Every piece of hardware the paper names, on one table, playing one layer of a quantum computation: the 852 nm trap laser split between the Hamamatsu SLM and the crossed AA Opto-Electronic AODs; the Raman laser, IQ modulator and Rohde &amp; Schwarz 6.8 GHz source; the 420 + 1013 nm Rydberg lasers from either side; the M Squared 795 nm lattice and 780 nm imaging light; the 10 W 1529 nm shield; MOT and bias coils; the NA-0.65 objective and ORCA-Quest camera; and the rack of five Spectrum AWGs whose pulses run down the cables. A box glows only while it fires. The timeline below is the same program the 3D scene is playing — scrub it, and a nine-step tour re-aims the camera at each subsystem.</em>
