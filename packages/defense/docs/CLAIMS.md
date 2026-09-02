@@ -113,7 +113,7 @@ each quoted fragment appears verbatim in the paper text when `PAPER_TXT` is set.
 | --- | --- | --- | --- |
 | `beams.pairSpacingUm` | 2 | Not in this paper | Intra-pair gate spacing taken from the group’s earlier gate work (ref. 36, Evered et al. 2023). |
 
-## Standard atomic data used alongside the paper (12)
+## Standard atomic data used alongside the paper (20)
 
 | Quantity | Value | Source |
 | --- | --- | --- |
@@ -129,6 +129,14 @@ each quoted fragment appears verbatim in the paper text when `PAPER_TXT` is set.
 | clock shift 575.15 Hz/G² | (g_J − g_I)² μ_B² / 2ΔE_hfs (foundations) | Steck, Rubidium 87 D Line Data (derived; recomputed from Breit–Rabi in hyperfine.test.ts) |
 | quantum defects | δs = 3.131, δp = 2.648 | Li et al. 2003; Mack et al. 2011 |
 | C6 (70S) | C6/h ≈ 862 GHz·μm⁶, scaled as n*¹¹ | Bernien et al., Nature 551, 579 (2017) |
+| RB_LINES.d2.gamma, d1.gamma | Γ/2π = 6.0666 MHz (D2), 5.7500 MHz (D1) (foundations) | Steck, Rubidium 87 D Line Data |
+| I_SAT_WM2 | I_sat = 1.669 mW/cm² for the D2 cycling transition (foundations) | Steck, Rubidium 87 D Line Data |
+| RB87_MASS | 86.909 180 527 u (foundations) | CODATA / Steck |
+| RY_RB_THZ | R_Rb·c = 3289.82 THz (foundations) | Sansonetti, J. Phys. Chem. Ref. Data 35, 301 (2006) |
+| Rydberg lifetimes | τ₀ n*³ radiative scaling and the 300 K black-body rate ∝ 1/n² (foundations) | Beterov et al., Phys. Rev. A 79, 052504 (2009) |
+| PAULI_THRESHOLD | ≈ 10.3% for independent noise, perfect syndromes, matching decoder (foundations) | Dennis, Kitaev, Landahl & Preskill, J. Math. Phys. 43, 4452 (2002); Wang, Harrington & Preskill (2003) |
+| ERASURE_THRESHOLD | 50% = square-lattice bond-percolation point (foundations) | Stace, Barrett & Doherty, Phys. Rev. Lett. 102, 200501 (2009) |
+| Tsirelson bound 2√2 | maximal quantum CHSH value (foundations) | Cirel’son, Lett. Math. Phys. 4, 93 (1980) |
 
 ## Derived on the page
 

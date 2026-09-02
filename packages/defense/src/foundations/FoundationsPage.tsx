@@ -59,25 +59,43 @@ export function FoundationsIndex() {
           </section>
           <section className="sec">
             <h2>
-              <span>In preparation</span>
-              The rest of the map
+              <span>Reading order</span>
+              What assumes what
             </h2>
-            <p className="standfirst">In dependency order; each names what it assumes.</p>
-            <div className="fcards">
-              {planned.map((f) => (
-                <div key={f.slug} className="fcard fcard-planned">
-                  <p className="fcard-title">{f.title}</p>
-                  <p className="fcard-kicker">{f.kicker}</p>
-                  <p className="fcard-summary">{f.summary}</p>
-                  <p className="fcard-meta">
+            <p className="standfirst">
+              The pages form a dependency chain; each names what it takes for granted. Read top to
+              bottom for the full route from a two-level system to an error-corrected T gate.
+            </p>
+            <ol className="fchain">
+              {FOUNDATIONS.map((f) => (
+                <li key={f.slug}>
+                  <a href={`#/foundations/${f.slug}`}>{f.title}</a>
+                  <span className="fchain-needs">
                     {f.needs.length > 0
                       ? `assumes: ${f.needs.map((n) => findFoundation(n)?.title ?? n).join(', ')}`
                       : 'assumes nothing'}
-                  </p>
-                </div>
+                  </span>
+                </li>
               ))}
-            </div>
+            </ol>
           </section>
+          {planned.length > 0 ? (
+            <section className="sec">
+              <h2>
+                <span>In preparation</span>
+                The rest of the map
+              </h2>
+              <div className="fcards">
+                {planned.map((f) => (
+                  <div key={f.slug} className="fcard fcard-planned">
+                    <p className="fcard-title">{f.title}</p>
+                    <p className="fcard-kicker">{f.kicker}</p>
+                    <p className="fcard-summary">{f.summary}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
         </article>
       </div>
     </div>

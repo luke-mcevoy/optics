@@ -39,3 +39,15 @@ export const CoupledSpins = board(
   () => import('./foundations/CoupledSpins.tsx').then((m) => ({ default: m.CoupledSpins })),
   980,
 );
+export const TweezerTrap3D = board(
+  () => import('./foundations/TweezerTrap3D.tsx').then((m) => ({ default: m.TweezerTrap3D })),
+  980,
+);
+export const MotScene3D = board(
+  () => import('./foundations/MotScene3D.tsx').then((m) => ({ default: m.MotScene3D })),
+  1100,
+);
+export const VdwPair3D = board(
+  () => import('./foundations/VdwPair3D.tsx').then((m) => ({ default: m.VdwPair3D })),
+  1000,
+);

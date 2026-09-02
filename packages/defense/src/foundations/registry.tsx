@@ -1,4 +1,10 @@
 import type { ReactNode } from 'react';
+import { COOLING_SECTIONS } from './CoolingAndImaging.tsx';
+import { ENTANGLEMENT_SECTIONS } from './Entanglement.tsx';
+import { QEC_SECTIONS } from './ErrorCorrection.tsx';
+import { LIGHT_SECTIONS } from './LightAndAtoms.tsx';
+import { QUBIT_SECTIONS } from './Qubit.tsx';
+import { RYDBERG_SECTIONS } from './Rydberg.tsx';
 import { RUBIDIUM_ATOM_SECTIONS } from './RubidiumAtom.tsx';
 
 export type FoundationSection = {
@@ -28,8 +34,8 @@ export const FOUNDATIONS: readonly Foundation[] = [
     summary:
       'Two-level systems, the Bloch sphere, superposition versus mixture, Rabi oscillation, detuning and phase.',
     needs: [],
-    status: 'planned',
-    sections: [],
+    status: 'live',
+    sections: QUBIT_SECTIONS,
   },
   {
     slug: 'rubidium-atom',
@@ -48,8 +54,8 @@ export const FOUNDATIONS: readonly Foundation[] = [
     summary:
       'The AC Stark shift and the dipole force that make a tweezer, why far-detuned light scatters less, σ± and π selection rules, optical pumping, and Raman transitions through a virtual level.',
     needs: ['rubidium-atom'],
-    status: 'planned',
-    sections: [],
+    status: 'live',
+    sections: LIGHT_SECTIONS,
   },
   {
     slug: 'cooling-and-imaging',
@@ -57,8 +63,8 @@ export const FOUNDATIONS: readonly Foundation[] = [
     kicker: 'From a hot vapour to a picture of single atoms',
     summary: 'Doppler cooling, the magneto-optical trap, sub-Doppler cooling, fluorescence imaging and photon statistics.',
     needs: ['light-and-atoms'],
-    status: 'planned',
-    sections: [],
+    status: 'live',
+    sections: COOLING_SECTIONS,
   },
   {
     slug: 'rydberg',
@@ -66,8 +72,8 @@ export const FOUNDATIONS: readonly Foundation[] = [
     kicker: 'Why a highly excited atom is a giant and how giants talk',
     summary: 'Scaling laws with n, the van der Waals interaction, and the blockade that makes a gate.',
     needs: ['rubidium-atom'],
-    status: 'planned',
-    sections: [],
+    status: 'live',
+    sections: RYDBERG_SECTIONS,
   },
   {
     slug: 'entanglement',
@@ -75,8 +81,8 @@ export const FOUNDATIONS: readonly Foundation[] = [
     kicker: 'Correlations that no classical bits can have',
     summary: 'Correlation versus entanglement, CZ and CNOT, Bell tests, and what “fidelity” measures.',
     needs: ['qubit'],
-    status: 'planned',
-    sections: [],
+    status: 'live',
+    sections: ENTANGLEMENT_SECTIONS,
   },
   {
     slug: 'error-correction',
@@ -85,8 +91,8 @@ export const FOUNDATIONS: readonly Foundation[] = [
     summary:
       'Bit and phase flips, stabilizer measurements that do not collapse the state, code distance, thresholds, Clifford versus non-Clifford gates, magic states, Eastin–Knill and teleportation.',
     needs: ['entanglement'],
-    status: 'planned',
-    sections: [],
+    status: 'live',
+    sections: QEC_SECTIONS,
   },
 ];
 

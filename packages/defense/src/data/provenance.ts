@@ -142,4 +142,12 @@ export const STANDARD_VALUES: readonly Provenance[] = [
   { path: 'clock shift 575.15 Hz/G²', where: 'Steck, Rubidium 87 D Line Data (derived; recomputed from Breit–Rabi in hyperfine.test.ts)', quote: '', kind: 'standard', note: '(g_J − g_I)² μ_B² / 2ΔE_hfs (foundations)' },
   { path: 'quantum defects', where: 'Li et al. 2003; Mack et al. 2011', quote: '', kind: 'standard', note: 'δs = 3.131, δp = 2.648' },
   { path: 'C6 (70S)', where: 'Bernien et al., Nature 551, 579 (2017)', quote: '', kind: 'standard', note: 'C6/h ≈ 862 GHz·μm⁶, scaled as n*¹¹' },
+  { path: 'RB_LINES.d2.gamma, d1.gamma', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: 'Γ/2π = 6.0666 MHz (D2), 5.7500 MHz (D1) (foundations)' },
+  { path: 'I_SAT_WM2', where: 'Steck, Rubidium 87 D Line Data', quote: '', kind: 'standard', note: 'I_sat = 1.669 mW/cm² for the D2 cycling transition (foundations)' },
+  { path: 'RB87_MASS', where: 'CODATA / Steck', quote: '', kind: 'standard', note: '86.909 180 527 u (foundations)' },
+  { path: 'RY_RB_THZ', where: 'Sansonetti, J. Phys. Chem. Ref. Data 35, 301 (2006)', quote: '', kind: 'standard', note: 'R_Rb·c = 3289.82 THz (foundations)' },
+  { path: 'Rydberg lifetimes', where: 'Beterov et al., Phys. Rev. A 79, 052504 (2009)', quote: '', kind: 'standard', note: 'τ₀ n*³ radiative scaling and the 300 K black-body rate ∝ 1/n² (foundations)' },
+  { path: 'PAULI_THRESHOLD', where: 'Dennis, Kitaev, Landahl & Preskill, J. Math. Phys. 43, 4452 (2002); Wang, Harrington & Preskill (2003)', quote: '', kind: 'standard', note: '≈ 10.3% for independent noise, perfect syndromes, matching decoder (foundations)' },
+  { path: 'ERASURE_THRESHOLD', where: 'Stace, Barrett & Doherty, Phys. Rev. Lett. 102, 200501 (2009)', quote: '', kind: 'standard', note: '50% = square-lattice bond-percolation point (foundations)' },
+  { path: 'Tsirelson bound 2√2', where: 'Cirel’son, Lett. Math. Phys. 4, 93 (1980)', quote: '', kind: 'standard', note: 'maximal quantum CHSH value (foundations)' },
 ];

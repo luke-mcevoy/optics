@@ -132,7 +132,8 @@ export const CHAPTERS: Chapter[] = [
             A classical bit is a switch: off or on. Physics already gave you a better object — any
             isolated two-level system. Call the lower level |0⟩ and the upper |1⟩. A general
             state is α|0⟩ + β|1⟩ with |α|² + |β|² = 1. That is one complex direction, which you
-            can draw as a point on a sphere (the Bloch sphere). A <em>gate</em> is a rotation of
+            can draw as a point on a sphere (the{' '}
+            <Term to="qubit/sphere" tip="Foundations: the Bloch sphere, superposition and measurement">Bloch sphere</Term>). A <em>gate</em> is a rotation of
             that point. A <em>measurement</em> in the 0/1 basis collapses the point onto a pole
             and gives you a classical bit, with probabilities |α|² and |β|².
           </p>
@@ -262,8 +263,10 @@ export const CHAPTERS: Chapter[] = [
         <Primer>
           <p>
             Shine light on an atom far from resonance and you do not absorb photons so much as
-            you shift energies (the AC Stark effect) and, if you use two tones whose difference
-            matches the clock splitting, you rotate the qubit (a Raman transition). Same
+            you shift energies (the{' '}
+            <Term to="light-and-atoms/dipole" tip="Foundations: the driven dipole, polarizability and the AC Stark shift">AC Stark effect</Term>) and, if you use two tones whose difference
+            matches the clock splitting, you rotate the qubit (a{' '}
+            <Term to="light-and-atoms/raman" tip="Foundations: the Raman Λ scheme and its detuning trade-off">Raman transition</Term>). Same
             second-order perturbation theory you used in atomic physics: amplitude to be in the
             excited state is Ω/2Δ, energy shift is Ω²/4Δ, scattering is Γ Ω²/4Δ². Red-detuned
             (Δ &lt; 0) makes a high-field-seeking potential — a trap. Two Raman legs with
@@ -317,9 +320,12 @@ export const CHAPTERS: Chapter[] = [
           <p>
             Two ordinary 5s atoms a few microns apart barely notice each other. Promote one
             electron to a high-n Rydberg orbital and the atom becomes a large, polarizable dipole.
-            Two such atoms interact with a van der Waals potential C<sub>6</sub>/R<sup>6</sup>.
-            If that shift is larger than the driving Rabi frequency, the second atom cannot
-            absorb the same laser — <em>blockade</em>. You do not need the electron clouds to
+            Two such atoms interact with a{' '}
+            <Term to="rydberg/vdw" tip="Foundations: where the C₆/R⁶ interaction comes from and how it scales with n">van der Waals potential</Term> C<sub>6</sub>/R<sup>6</sup>.
+            If that shift is larger than the driving{' '}
+            <Term to="qubit/rabi" tip="Foundations: Rabi oscillations — resonant and detuned driving on the Bloch sphere">Rabi frequency</Term>, the second atom cannot
+            absorb the same laser —{' '}
+            <Term to="rydberg/blockade" tip="Foundations: blockade in the pair-state picture, integrated live"><em>blockade</em></Term>. You do not need the electron clouds to
             overlap; you need the pair-state energy to miss the laser. Drive the pair with a
             pulse designed for isolated atoms and the blocked pair picks up a different phase
             than two independent atoms would: a conditional phase, a CZ gate. (The textbook
@@ -372,7 +378,8 @@ export const CHAPTERS: Chapter[] = [
         </Plain>
         <Primer>
           <p>
-            A tightly focused red-detuned laser is an optical tweezer: the AC Stark shift is
+            A tightly focused red-detuned laser is an{' '}
+            <Term to="light-and-atoms/tweezer" tip="Foundations: the dipole trap in 3D — depth, scattering and the trapped atom">optical tweezer</Term>: the AC Stark shift is
             deeper at the focus, so the atom sits there. One tweezer, one atom. A hundred
             tweezers means a hundred foci. A spatial light modulator paints a phase pattern
             φ(x,y) on a single 852 nm beam; a lens Fourier-transforms that field; the foci
@@ -579,7 +586,8 @@ export const CHAPTERS: Chapter[] = [
             The usual alkali trick destroys the atom: push one spin state out of the
             trap and photograph what remains. You learn 0 versus 1 and you have lost
             the qubit. This paper needs the atom back — for reuse, and because a
-            missing atom is information (an erasure), not a random 0. So they do three
+            missing atom is information (an{' '}
+            <Term to="error-correction/erasure" tip="Foundations: why an error with a known location is much easier to correct">erasure</Term>), not a random 0. So they do three
             things, in this order.
           </p>
           <p>
@@ -614,11 +622,13 @@ export const CHAPTERS: Chapter[] = [
             795 nm σ<sub>−</sub> lattice, 50–200 GHz blue of D1; |2,−2⟩ dark (this is
             |1⟩, and the AOD moves it), |2,+2⟩ bright and pinned (this is |0⟩),
             ~6 MHz light shift. Pump/Raman into those stretched states, 100 μs ramp,
-            2 μm / 500 μs AOD walk, then a conventional fluorescence image.
+            2 μm / 500 μs AOD walk, then a conventional{' '}
+            <Term to="cooling-and-imaging/imaging" tip="Foundations: fluorescence imaging — photon budgets, Poisson statistics, heating">fluorescence image</Term>.
             Imaging optics: 0.65-NA Special Optics objective onto {PAPER.imaging.camera}.{' '}
             {PAPER.lattice.bitFlipPct}({PAPER.lattice.bitFlipUnc})% bit-flip,{' '}
             {PAPER.lattice.lossPct}({PAPER.lattice.lossUnc})% loss; error lives on
-            the dark state (0.87% vs 0.05%). Mid-circuit cooling: 1D PGC in finite B
+            the dark state (0.87% vs 0.05%). Mid-circuit{' '}
+            <Term to="cooling-and-imaging/doppler" tip="Foundations: how laser light cools an atom, and the Doppler and recoil limits">cooling</Term>: 1D PGC in finite B
             by detuning the two σ beams by twice the Zeeman splitting (rotating frame
             cancels B), then EIT ~80 MHz blue of F=2→F′=2. Re-pump: 24 Raman-assisted
             cycles. The 1,529 nm shield exists so this 780 nm light does not talk to
@@ -668,13 +678,14 @@ export const CHAPTERS: Chapter[] = [
             store the information in the <em>correlations</em> among many physical
             qubits — an error-correcting code. You never ask “is atom 7 a 0?” You ask
             “do these four neighbours still agree on their parity?” That question is a
-            <em>stabilizer</em> measurement: it extracts a syndrome bit and, if you
+            <Term to="error-correction/stabilizers" tip="Foundations: measuring parity without measuring the bit, step by step"><em>stabilizer</em></Term> measurement: it extracts a syndrome bit and, if you
             designed it right, does not collapse the logical information.
           </p>
           <CodePrimer />
           <p>
             Distance d means it takes at least d single-atom mistakes to fake a logical
-            flip. If the physical error probability p is below a threshold p_th, the
+            flip. If the physical error probability p is below a{' '}
+            <Term to="error-correction/threshold" tip="Foundations: the threshold, live Monte Carlo for d = 3, 5, 7">threshold</Term> p_th, the
             logical error scales roughly as (p/p_th)<sup>(d+1)/2</sup> — making the
             block bigger makes the encoded bit quieter. “Below threshold” is the
             experimental sentence “d = 5 is quieter than d = 3 on this circuit.”
@@ -830,7 +841,8 @@ export const CHAPTERS: Chapter[] = [
             The gates you can do “in parallel, atom by atom, without looking” are
             called transversal. If those already included every rotation, a slightly
             wrong physical pulse would be a slightly wrong logical pulse — unprotected.
-            That is the Eastin–Knill theorem. The way out is to allow measurement.
+            That is the{' '}
+            <Term to="error-correction/magic" tip="Foundations: Clifford gates, magic states and T-gate teleportation">Eastin–Knill theorem</Term>. The way out is to allow measurement.
             Some 3D codes have a transversal T (a 45° rotation); what they lack is the
             Hadamard. So the Hadamard is teleported: a transversal CZ between the data
             block and a fresh |+<sub>L</sub>⟩ block, an X-basis measurement, and a
@@ -848,7 +860,8 @@ export const CHAPTERS: Chapter[] = [
             block is properly entangled and stabilizer signs are +1. 2D codes revive
             at 90°; bare qubits at 180°. |T_L⟩ is an eigenstate of
             (X<sup>⊗n</sup> + Y<sup>⊗n</sup>)/√2 — magic requires in-block
-            entanglement. Error-corrected CHSH: {PAPER.codes.chsh} (with error detection,
+            entanglement. Error-corrected{' '}
+            <Term to="entanglement/bell" tip="Foundations: the CHSH test — why no classical model exceeds 2">CHSH</Term>: {PAPER.codes.chsh} (with error detection,
             Extended Data Fig. 9f), saturating the Tsirelson bound 2√2 within error. Circuit is a stripped 15-to-1 distillation (inner surface
             codes replaced by physical qubits). Without feedforward the teleport
             randomly synthesizes 2<sup>N−1</sup> angles; they reconstructed N ≤ 3

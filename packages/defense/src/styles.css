@@ -725,6 +725,60 @@ article p em { font-style: italic; color: inherit; }
   margin-bottom: 10px;
 }
 
+.mode-gap { flex: 1 0 12px; }
+
+.fchain {
+  list-style: decimal;
+  padding-left: 1.4em;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.fchain li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.fchain li a {
+  color: var(--cream);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--muted);
+}
+
+.fchain-needs {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
+.mode-gap { flex: 1 0 12px; }
+
+.fchain {
+  list-style: decimal;
+  padding-left: 1.4em;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.fchain li {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.fchain li a {
+  color: var(--cream);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--muted);
+}
+
+.fchain-needs {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+
 .mode-row button.active {
   border-color: var(--ink);
   color: var(--cream);
@@ -936,3 +990,6 @@ a.fcard:hover { border-color: var(--line-2); border-top-color: var(--cream); tra
 .fcard-meta { margin-top: 14px !important; font-family: var(--serif); font-size: 13px; color: var(--faint); }
 
 .route-loading { min-height: 100vh; }
+
+.slider-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+@media (max-width: 640px) { .slider-pair { grid-template-columns: 1fr; } }
