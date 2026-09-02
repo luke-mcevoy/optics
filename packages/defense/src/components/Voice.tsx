@@ -4,7 +4,9 @@ import type { ReactNode } from 'react';
 export function Plain({ children }: { children: ReactNode }) {
   return (
     <section className="voice plain-voice">
-      <p className="voice-label">Level 1 | Plain English — start here</p>
+      <p className="voice-label">
+        <span className="voice-badge">Level 1</span>Plain English — start here
+      </p>
       {children}
     </section>
   );
@@ -14,7 +16,9 @@ export function Plain({ children }: { children: ReactNode }) {
 export function Primer({ children }: { children: ReactNode }) {
   return (
     <section className="voice primer">
-      <p className="voice-label">Level 2 | The physics</p>
+      <p className="voice-label">
+        <span className="voice-badge">Level 2</span>The physics
+      </p>
       {children}
     </section>
   );
@@ -24,7 +28,9 @@ export function Primer({ children }: { children: ReactNode }) {
 export function Defense({ children }: { children: ReactNode }) {
   return (
     <section className="voice defense-voice">
-      <p className="voice-label">Level 3 | What the paper measured</p>
+      <p className="voice-label">
+        <span className="voice-badge">Level 3</span>What the paper measured
+      </p>
       {children}
     </section>
   );

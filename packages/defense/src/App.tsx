@@ -3,6 +3,28 @@ import { CHAPTERS } from './chapters/pages.tsx';
 
 export function App() {
   const [active, setActive] = useState(CHAPTERS[0]?.id ?? 'thesis');
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+    };
+    const onScroll = () => {
+      if (raf === 0) raf = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf !== 0) window.cancelAnimationFrame(raf);
+    };
+  }, []);
 
   useEffect(() => {
     const nodes = CHAPTERS.map((ch) => document.getElementById(ch.id)).filter(
@@ -54,22 +76,37 @@ export function App() {
         <p className="mast-meta">
           <a href="https://doi.org/10.1038/s41586-025-09848-5">the paper ↗</a>
         </p>
+        <span className="mast-progress" style={{ transform: `scaleX(${progress})` }} />
       </header>
 
-      <aside className="provenance" role="note">
-        <p className="provenance-kicker">Public paper only · No insider information</p>
-        <p>
-          This page is an unofficial explainer of a published article. Every number,
-          claim, and figure is taken from Bluvstein, Geim et al., <em>Nature</em>{' '}
-          <strong>649</strong>, 39–46 (2026) (
-          <a href="https://doi.org/10.1038/s41586-025-09848-5">
-            doi:10.1038/s41586-025-09848-5
-          </a>
-          ) or computed from a formula stated there. There is no insider information:
-          nothing unpublished, nothing from private communication with the authors, and
-          no laboratory access beyond the paper and its public supplement.
-        </p>
-      </aside>
+      <header className="hero">
+        <div className="hero-inner">
+          <p className="hero-eyebrow">An interactive explainer</p>
+          <h1>How to build a quantum computer out of atoms</h1>
+          <p className="based-on">
+            Based on: Bluvstein, D., Geim, A.A., Li, S.H. et al. A fault-tolerant neutral-atom
+            architecture for universal quantum computation. <em>Nature</em> <strong>649</strong>,
+            39–46 (2026) ·{' '}
+            <a href="https://doi.org/10.1038/s41586-025-09848-5">doi:10.1038/s41586-025-09848-5</a>{' '}
+            · Harvard–MIT (Lukin group and collaborators)
+          </p>
+
+          <aside className="provenance" role="note">
+            <p className="provenance-kicker">Public paper only · No insider information</p>
+            <p>
+              This page is an unofficial explainer of a published article. Every number,
+              claim, and figure is taken from Bluvstein, Geim et al., <em>Nature</em>{' '}
+              <strong>649</strong>, 39–46 (2026) (
+              <a href="https://doi.org/10.1038/s41586-025-09848-5">
+                doi:10.1038/s41586-025-09848-5
+              </a>
+              ) or computed from a formula stated there. There is no insider information:
+              nothing unpublished, nothing from private communication with the authors, and
+              no laboratory access beyond the paper and its public supplement.
+            </p>
+          </aside>
+        </div>
+      </header>
 
       <div className="sheet">
         <nav className="toc" aria-label="Contents">
@@ -84,21 +121,13 @@ export function App() {
                 document.getElementById(ch.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }}
             >
+              <span className="toc-num">{ch.num}</span>
               {ch.title}
             </a>
           ))}
         </nav>
 
         <article className="article">
-          <h1>How to build a quantum computer out of atoms</h1>
-          <p className="based-on">
-            Based on: Bluvstein, D., Geim, A.A., Li, S.H. et al. A fault-tolerant neutral-atom
-            architecture for universal quantum computation. <em>Nature</em> <strong>649</strong>,
-            39–46 (2026) ·{' '}
-            <a href="https://doi.org/10.1038/s41586-025-09848-5">doi:10.1038/s41586-025-09848-5</a>{' '}
-            · Harvard–MIT (Lukin group and collaborators)
-          </p>
-
           <section className="abstract">
             <h2>How to read this guide</h2>
             <p>
@@ -117,7 +146,7 @@ export function App() {
           {CHAPTERS.map((ch) => (
             <section key={ch.id} id={ch.id} className="sec">
               <h2>
-                <span>{ch.num}</span>
+                <span>Chapter {ch.num}</span>
                 {ch.title}
               </h2>
               <p className="standfirst">{ch.kicker}</p>
