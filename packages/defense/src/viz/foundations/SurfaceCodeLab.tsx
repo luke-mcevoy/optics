@@ -83,9 +83,10 @@ export function SurfaceCodeLab() {
           to the left/right boundary) along the shortest total path, and flip everything on those
           paths. Success means error ⊕ correction is a closed loop or a boundary-to-boundary
           chain of <em>even</em> parity; failure is a chain of odd parity crossing left to right —
-          a logical X. Exact minimum-weight matching for ≤14 lit checks, greedy beyond. The
-          paper&rsquo;s d = 3 and d = 5 codes (Fig. 2) are the rotated variant of this lattice —
-          d² data qubits on a tilted checkerboard — with the same distance and decoding problem.
+          a logical X. Matching is exact minimum-weight for ≤14 lit checks and union-find
+          (Delfosse–Nickerson) beyond. The paper&rsquo;s d = 3 and d = 5 codes (Fig. 2) are the
+          rotated variant of this lattice — d² data qubits on a tilted checkerboard — with the
+          same distance and decoding problem.
         </>
       }
     >
@@ -301,7 +302,7 @@ function draw(
   status.forEach((t, i) => ctx.fillText(t, lx + 10, 250 + i * 16));
   if (phase === 'decoded') {
     ctx.fillStyle = MUTED;
-    ctx.fillText(decoded.exact ? 'matching: exact MWPM' : 'matching: greedy (>14 defects)', lx + 10, 330);
+    ctx.fillText(decoded.exact ? 'matching: exact MWPM' : 'matching: union-find', lx + 10, 330);
   }
   ctx.fillStyle = BLUE;
   ctx.fillText('d = ' + lat.d, ox, oy + (lat.d - 1) * cell + cell * 0.5 + 24);

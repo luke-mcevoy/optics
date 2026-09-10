@@ -44,7 +44,10 @@ export function RamanLambda() {
           while each beam still scatters photons at Γ<sub>sc</sub> = ΓΩ²/4Δ². <strong>b</strong>,
           Both versus Δ (log–log): Ω<sub>eff</sub> falls as 1/Δ, scattering as 1/Δ². The photons
           scattered during one π pulse, Γ<sub>sc</sub> × π/Ω<sub>eff</sub> = πΓ/2Δ per beam, do not
-          depend on power at all — only on how far you detune. That is why the paper detunes by{' '}
+          depend on power at all — only on how far you detune. Because Δ is enormous compared with
+          the 6.8 GHz splitting, each beam is equally far from resonance for an atom in either
+          ground state, so both beams scatter throughout the pulse and the total is πΓ/Δ. That is
+          why the paper detunes by{' '}
           {PAPER.raman.intermediateDetuningGHz} GHz (≈ 10⁵ linewidths) and then buys back the
           speed with more power; it quotes ~{PAPER.raman.scatteringPerPulse.toExponential(0)} scattering
           events per (composite) pulse. The single-photon Ω slider is a stand-in for laser power

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { ramanDifferentialStark, scatteringRate, twoPhotonRabi } from './formulas.ts';
 import {
   clebschGordan,
   dipolePotentialJ,
@@ -68,6 +69,17 @@ describe('Raman scattering budget', () => {
     const g = 2 * Math.PI * 6.0666e6;
     const d = 2 * Math.PI * 550e9;
     expect(ramanPhotonsPerPi(g, d)).toBeCloseTo(1.73e-5, 6);
+  });
+  it('πΓ/2Δ per beam: Γ_sc π / Ω_eff with one-beam Γ_sc; two beams (Δ ≫ ω_hf) give πΓ/Δ', () => {
+    const om = 2 * Math.PI * 10e6;
+    const g = 2 * Math.PI * 6.0666e6;
+    const d = 2 * Math.PI * 200e9;
+    const oEff = twoPhotonRabi(om, om, d);
+    const gSc = scatteringRate(om, g, d);
+    expect((gSc * Math.PI) / oEff).toBeCloseTo(ramanPhotonsPerPi(g, d), 12);
+    expect(ramanPhotonsPerPi(g, d)).toBeCloseTo((Math.PI * g) / (2 * d), 12);
+    expect((2 * gSc * Math.PI) / oEff).toBeCloseTo((Math.PI * g) / d, 12);
+    expect(ramanDifferentialStark(om, om, d)).toBeCloseTo(0, 12);
   });
 });
 

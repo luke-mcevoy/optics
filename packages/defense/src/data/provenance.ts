@@ -148,6 +148,7 @@ export const STANDARD_VALUES: readonly Provenance[] = [
   { path: 'RY_RB_THZ', where: 'Sansonetti, J. Phys. Chem. Ref. Data 35, 301 (2006)', quote: '', kind: 'standard', note: 'R_Rb·c = 3289.82 THz (foundations)' },
   { path: 'Rydberg lifetimes', where: 'Beterov et al., Phys. Rev. A 79, 052504 (2009)', quote: '', kind: 'standard', note: 'τ₀ n*³ radiative scaling and the 300 K black-body rate ∝ 1/n² (foundations)' },
   { path: 'PAULI_THRESHOLD', where: 'Dennis, Kitaev, Landahl & Preskill, J. Math. Phys. 43, 4452 (2002); Wang, Harrington & Preskill (2003)', quote: '', kind: 'standard', note: '≈ 10.3% for independent noise, perfect syndromes, matching decoder (foundations)' },
+  { path: 'PHENO_THRESHOLD', where: 'Wang, Harrington & Preskill, Ann. Phys. 303, 31 (2003)', quote: '', kind: 'standard', note: '≈ 2.9–3.3% for phenomenological noise (data + measurement errors, d rounds, MWPM); board line at 3.0% (foundations)' },
   { path: 'ERASURE_THRESHOLD', where: 'Stace, Barrett & Doherty, Phys. Rev. Lett. 102, 200501 (2009)', quote: '', kind: 'standard', note: '50% = square-lattice bond-percolation point (foundations)' },
   { path: 'Tsirelson bound 2√2', where: 'Cirel’son, Lett. Math. Phys. 4, 93 (1980)', quote: '', kind: 'standard', note: 'maximal quantum CHSH value (foundations)' },
 ];

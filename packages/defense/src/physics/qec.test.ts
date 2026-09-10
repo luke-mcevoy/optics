@@ -3,14 +3,17 @@ import { lcg } from '../viz/foundations/bloch2d.ts';
 import {
   binomial,
   decodeMatching,
+  decodeSpacetime,
   erasureSpans,
   isLogicalError,
+  PHENO_THRESHOLD,
   planarLattice,
   repetitionLogicalError,
   scalingLogicalError,
   syndrome,
   trialErasure,
   trialPauli,
+  trialPhenomenological,
   xor,
 } from './qec.ts';
 
@@ -91,7 +94,7 @@ describe('matching decoder', () => {
     }
     expect(failures).toBe(0);
   });
-  it('correction always clears the syndrome (random patterns, greedy path included)', () => {
+  it('correction always clears the syndrome (random patterns, union-find path included)', () => {
     const lat = planarLattice(7);
     const rand = lcg(3);
     for (let t = 0; t < 40; t += 1) {
@@ -153,5 +156,110 @@ describe('scaling law', () => {
     const p = 0.005;
     const pTh = 0.0107;
     expect(scalingLogicalError(p, 3, pTh) / scalingLogicalError(p, 5, pTh)).toBeCloseTo(pTh / p, 10);
+  });
+});
+
+describe('union-find matching', () => {
+  it('agrees with exact MWPM on random d = 5 syndromes and always clears them', () => {
+    const lat = planarLattice(5);
+    const rand = lcg(9);
+    for (let t = 0; t < 80; t += 1) {
+      const err = new Uint8Array(lat.n);
+      for (let e = 0; e < lat.n; e += 1) if (rand() < 0.12) err[e] = 1;
+      const synd = syndrome(lat, err);
+      const nDef = synd.reduce((a, b) => a + b, 0);
+      const { correction, exact } = decodeMatching(lat, synd);
+      expect(Array.from(syndrome(lat, xor(err, correction))).every((x) => x === 0)).toBe(true);
+      if (nDef <= 14) expect(exact).toBe(true);
+    }
+  });
+});
+
+describe('phenomenological (d-round) model', () => {
+  it('with zero measurement error, one data-error layer matches the 2D model in distribution', () => {
+    const lat = planarLattice(5);
+    const p = 0.06;
+    const trials = 2500;
+    const rand = lcg(17);
+    let a = 0;
+    let b = 0;
+    for (let i = 0; i < trials; i += 1) if (trialPauli(lat, p, rand)) a += 1;
+    for (let i = 0; i < trials; i += 1) if (trialPhenomenological(lat, p, rand, { pData: p, pMeas: 0, rounds: 1 })) b += 1;
+    expect(Math.abs(a - b) / trials).toBeLessThan(0.04);
+  });
+
+  it('a single data error or a single measurement error is corrected for d ≥ 3', () => {
+    for (const d of [3, 5]) {
+      const lat = planarLattice(d);
+      for (let e = 0; e < lat.n; e += 1) {
+        const acc = new Uint8Array(lat.n);
+        acc[e] = 1;
+        const zero: Uint8Array = new Uint8Array(lat.m);
+        const s: Uint8Array = syndrome(lat, acc);
+        const outcomes: Uint8Array[] = [zero];
+        for (let t = 0; t < d; t += 1) outcomes.push(s);
+        outcomes.push(s);
+        const { correction } = decodeSpacetime(lat, outcomes);
+        expect(isLogicalError(lat, xor(acc, correction))).toBe(false);
+      }
+      for (let c = 0; c < lat.m; c += 1) {
+        const zero: Uint8Array = new Uint8Array(lat.m);
+        const flipped: Uint8Array = new Uint8Array(lat.m);
+        flipped[c] = 1;
+        const outcomes: Uint8Array[] = [zero];
+        for (let t = 0; t < d; t += 1) outcomes.push(t === 0 ? flipped : zero);
+        outcomes.push(zero);
+        const { correction } = decodeSpacetime(lat, outcomes);
+        expect(correction.some((x) => x === 1)).toBe(false);
+        expect(isLogicalError(lat, new Uint8Array(lat.n))).toBe(false);
+      }
+    }
+  });
+
+  it('below threshold, d = 5 beats d = 3 at p = 0.01; above it the order reverses at p = 0.1', () => {
+    const rand = lcg(23);
+    const trials = 1200;
+    const rate = (d: number, p: number) => {
+      const lat = planarLattice(d);
+      let fails = 0;
+      for (let i = 0; i < trials; i += 1) if (trialPhenomenological(lat, p, rand)) fails += 1;
+      return fails / trials;
+    };
+    expect(rate(5, 0.01)).toBeLessThan(rate(3, 0.01));
+    expect(rate(5, 0.1)).toBeGreaterThan(rate(3, 0.1));
+  });
+
+  it('d = 3 and d = 5 curves cross in [0.02, 0.045] (WHP phenomenological threshold ≈ 2.9–3.3%)', () => {
+    const rand = lcg(41);
+    const trials = 700;
+    const ps = [0.02, 0.026, 0.032, 0.038, 0.045];
+    const rate = (d: number, p: number) => {
+      const lat = planarLattice(d);
+      let fails = 0;
+      for (let i = 0; i < trials; i += 1) if (trialPhenomenological(lat, p, rand)) fails += 1;
+      return fails / trials;
+    };
+    const r3 = ps.map((p) => rate(3, p));
+    const r5 = ps.map((p) => rate(5, p));
+    let cross = PHENO_THRESHOLD;
+    let found = false;
+    for (let i = 0; i < ps.length - 1; i += 1) {
+      const d0 = r5[i]! - r3[i]!;
+      const d1 = r5[i + 1]! - r3[i + 1]!;
+      if (d0 === 0) {
+        cross = ps[i]!;
+        found = true;
+        break;
+      }
+      if (d0 * d1 <= 0) {
+        const f = Math.abs(d0) / (Math.abs(d0) + Math.abs(d1) || 1);
+        cross = ps[i]! + f * (ps[i + 1]! - ps[i]!);
+        found = true;
+        break;
+      }
+    }
+    expect(found).toBe(true);
+    expect(cross).toBeGreaterThanOrEqual(0.02);
+    expect(cross).toBeLessThanOrEqual(0.045);
   });
 });

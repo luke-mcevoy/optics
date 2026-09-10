@@ -1,5 +1,13 @@
 # SESSION.md — AI handoff journal
 
+## 2026-09-10 — defense: Foundations appendix complete + accuracy pass
+
+**Done:** The seven Foundations pages now live under `#/foundations`: A qubit, physically; Inside the rubidium atom; What light does to an atom; Cooling and seeing atoms; Rydberg atoms; Entanglement and two-qubit gates; Why error correction can work at all. Physics modules `qubit`, `hyperfine`, `light`, `cooling`, `rydberg`, `twoqubit`, `qec` (plus shared `formulas` / orbitals) sit next to vitest files; the defense suite is 128 passing + 1 skipped paper-text check. Dotted `Term` links in the guide jump to `#/foundations/<slug>/<section>`. Accuracy pass over all seven pages found no numerical errors; the Raman board's caption now states its two-beam model explicitly (πΓ/2Δ per beam, πΓ/Δ total because Δ ≫ ω_hf), guarded in `light.test.ts`. Phenomenological (d-round) noise is a third ThresholdPlot mode, decoded in 2+1 D by exact MWPM (≤14 defects) or union-find (Delfosse–Nickerson) beyond — the greedy caveat is gone. Astra work remains parked on `astra/instrument-journey`, draft PR #1 (not for merge).
+
+**Not done:** Mobile stacking for wide boards; a scripted sync to the standalone repo whose clone lives at `/tmp/neutral-atom-compute-visualizer`. The repo’s original Optics Studio mission in `AGENTS.md` — agent tool API, claim-auditing eval, benchmark conversations — is untouched.
+
+---
+
 ## 2026-08-27 — Cursor agent (orchestration wrap-up)
 
 **Done:** v1 core complete and committed on main: packages/kernel (80 tests),

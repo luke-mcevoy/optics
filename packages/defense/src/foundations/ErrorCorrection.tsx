@@ -2,7 +2,7 @@ import { Assumption, Claim, Note } from '../components/Claim.tsx';
 import { Eq } from '../components/Eq.tsx';
 import { Defense, Plain, Primer } from '../components/Voice.tsx';
 import { PAPER } from '../data/paper.ts';
-import { ERASURE_THRESHOLD, PAULI_THRESHOLD } from '../physics/qec.ts';
+import { ERASURE_THRESHOLD, PAULI_THRESHOLD, PHENO_THRESHOLD } from '../physics/qec.ts';
 import { ErasureBoard } from '../viz/foundations/ErasureBoard.tsx';
 import { MagicState } from '../viz/foundations/MagicState.tsx';
 import { RepetitionCode } from '../viz/foundations/RepetitionCode.tsx';
@@ -140,11 +140,15 @@ export const QEC_SECTIONS: readonly FoundationSection[] = [
           </Eq>
           <p>
             For independent Pauli noise with perfect syndrome measurement the planar code&rsquo;s
-            threshold is p<sub>th</sub> ≈ {(PAULI_THRESHOLD * 100).toFixed(1)}% (matching decoder). With
-            noisy measurements repeated over d rounds, the relevant threshold is for the 3D
-            space–time decoding problem and drops to ≈ 0.5–1% per operation in circuit-level
-            models. The paper reports Λ = {PAPER.qec.belowThreshold}({PAPER.qec.belowThresholdUnc}) from
-            d = 3 to d = 5 with four rounds of syndrome extraction, i.e. a logical error per round of{' '}
+            threshold is p<sub>th</sub> ≈ {(PAULI_THRESHOLD * 100).toFixed(1)}% (matching decoder). The
+            board&rsquo;s third mode is the phenomenological model: data errors and check flips
+            each of probability p, for d noisy rounds plus a final perfect round, decoded in
+            2+1 D space–time, reported per round. That threshold is ≈ {(PHENO_THRESHOLD * 100).toFixed(1)}%
+            (Wang–Harrington–Preskill 2003) — the same <em>kind</em> of quantity as the paper&rsquo;s
+            Λ (still idealised: no gate errors, no leakage, one error sector). Full circuit-level
+            noise drops further, to ≈ 0.5–1% per operation. The paper reports Λ ={' '}
+            {PAPER.qec.belowThreshold}({PAPER.qec.belowThresholdUnc}) from d = 3 to d = 5 with four
+            rounds of syndrome extraction, i.e. a logical error per round of{' '}
             {PAPER.qec.d5LeprPct}({PAPER.qec.d5LeprUnc})% against {PAPER.qec.d3LeprPct}% — a statement about
             slope, not about absolute size.
           </p>
@@ -260,13 +264,13 @@ export const QEC_SECTIONS: readonly FoundationSection[] = [
           <a href="#universal">chapter 13, magic states</a> · <a href="#/foundations/entanglement">Entanglement and two-qubit gates</a>.
         </Note>
         <Assumption>
-          Independent, identically distributed errors on data qubits only; perfect syndrome
-          extraction (no measurement errors, no ancilla faults, single round). One error sector
-          (X) is simulated; the Z sector is the exact dual. The matching decoder is exact
-          minimum-weight for ≤14 defects and greedy otherwise, which slightly understates
-          performance at high error rates. Thresholds quoted for these idealisations are not the
-          paper&rsquo;s circuit-level thresholds. Teleportation and stabilizer boards are exact
-          state-vector calculations on one and two qubits.
+          Independent, identically distributed errors; one error sector (X), the Z sector being
+          the exact dual. The Pauli and erasure modes use a single perfect-syndrome round; the
+          phenomenological mode uses d noisy rounds plus a final perfect round, still without
+          gate errors, leakage or correlations. The matching decoder is exact minimum-weight for
+          ≤14 defects and union-find (Delfosse–Nickerson) beyond. Thresholds quoted for these
+          idealisations are not the paper&rsquo;s circuit-level thresholds. Teleportation and
+          stabilizer boards are exact state-vector calculations on one and two qubits.
         </Assumption>
       </>
     ),

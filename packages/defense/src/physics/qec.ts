@@ -124,97 +124,199 @@ function paintPath(lat: Lattice, out: Uint8Array, a: Defect, b: Defect | null): 
 
 export const EXACT_MATCH_LIMIT = 14;
 
+export type SpaceTimeDefect = { r: number; c: number; t: number };
+
+function pairCostST(a: SpaceTimeDefect, b: SpaceTimeDefect): number {
+  return Math.abs(a.r - b.r) + Math.abs(a.c - b.c) + Math.abs(a.t - b.t);
+}
+function boundaryCostST(a: SpaceTimeDefect, d: number): number {
+  return Math.min(a.c + 1, d - 1 - a.c);
+}
+
 /**
- * Minimum-weight matching of syndrome defects, each either paired with another defect or sent to
- * the nearest rough boundary. Exact (bitmask DP) for ≤ EXACT_MATCH_LIMIT defects, greedy beyond.
- * Returns the correction as an edge pattern plus the matching for display.
+ * Minimum-weight pairing of defects (each paired with another defect or sent to a rough
+ * boundary). Exact bitmask DP for ≤ EXACT_MATCH_LIMIT defects; union-find clustering
+ * (Delfosse & Nickerson) beyond. `pairW` / `boundW` default to 2D Manhattan + column distance.
+ */
+export function matchDefects(
+  defects: readonly SpaceTimeDefect[],
+  d: number,
+  pairW: (a: SpaceTimeDefect, b: SpaceTimeDefect) => number = pairCostST,
+  boundW: (a: SpaceTimeDefect) => number = (a) => boundaryCostST(a, d),
+): { pairs: [SpaceTimeDefect, SpaceTimeDefect | null][]; exact: boolean } {
+  const k = defects.length;
+  if (k === 0) return { pairs: [], exact: true };
+  if (k <= EXACT_MATCH_LIMIT) return { pairs: exactPairs(defects, pairW, boundW), exact: true };
+  return { pairs: unionFindPairs(defects, pairW, boundW), exact: false };
+}
+
+function exactPairs(
+  defects: readonly SpaceTimeDefect[],
+  pairW: (a: SpaceTimeDefect, b: SpaceTimeDefect) => number,
+  boundW: (a: SpaceTimeDefect) => number,
+): [SpaceTimeDefect, SpaceTimeDefect | null][] {
+  const k = defects.length;
+  const full = (1 << k) - 1;
+  const memo = new Float64Array(1 << k).fill(-1);
+  const choice = new Int32Array(1 << k).fill(-2);
+  const solve = (mask: number): number => {
+    if (mask === 0) return 0;
+    if (memo[mask]! >= 0) return memo[mask]!;
+    let i = 0;
+    while (((mask >> i) & 1) === 0) i += 1;
+    const rest = mask & ~(1 << i);
+    let best = boundW(defects[i]!) + solve(rest);
+    let pick = -1;
+    for (let j = i + 1; j < k; j += 1) {
+      if (((rest >> j) & 1) === 0) continue;
+      const cost = pairW(defects[i]!, defects[j]!) + solve(rest & ~(1 << j));
+      if (cost < best) {
+        best = cost;
+        pick = j;
+      }
+    }
+    memo[mask] = best;
+    choice[mask] = pick;
+    return best;
+  };
+  solve(full);
+  const pairs: [SpaceTimeDefect, SpaceTimeDefect | null][] = [];
+  let mask = full;
+  while (mask !== 0) {
+    let i = 0;
+    while (((mask >> i) & 1) === 0) i += 1;
+    const pick = choice[mask]!;
+    if (pick === -1) {
+      pairs.push([defects[i]!, null]);
+      mask &= ~(1 << i);
+    } else {
+      pairs.push([defects[i]!, defects[pick]!]);
+      mask &= ~(1 << i) & ~(1 << pick);
+    }
+  }
+  return pairs;
+}
+
+/**
+ * Union-find clustering decoder: grow odd-parity clusters by adding the cheapest unused
+ * defect–defect or defect–boundary edge until every cluster is even, then peel the forest
+ * (Delfosse & Nickerson, Quantum 5, 595 (2021)).
+ */
+function unionFindPairs(
+  defects: readonly SpaceTimeDefect[],
+  pairW: (a: SpaceTimeDefect, b: SpaceTimeDefect) => number,
+  boundW: (a: SpaceTimeDefect) => number,
+): [SpaceTimeDefect, SpaceTimeDefect | null][] {
+  const k = defects.length;
+  const parent = Int32Array.from({ length: k }, (_, i) => i);
+  const find = (x: number): number => {
+    let i = x;
+    while (parent[i] !== i) {
+      parent[i] = parent[parent[i]!]!;
+      i = parent[i]!;
+    }
+    return i;
+  };
+  const size = new Int32Array(k).fill(1);
+  const hasBoundary = new Uint8Array(k);
+  const odd = (r: number) => size[r]! % 2 === 1 && hasBoundary[r] === 0;
+  const union = (a: number, b: number): number => {
+    const ra = find(a);
+    const rb = find(b);
+    if (ra === rb) return ra;
+    if ((size[ra] ?? 0) < (size[rb] ?? 0)) {
+      parent[ra] = rb;
+      size[rb] = (size[rb] ?? 0) + (size[ra] ?? 0);
+      hasBoundary[rb] = (hasBoundary[rb] ?? 0) | (hasBoundary[ra] ?? 0);
+      return rb;
+    }
+    parent[rb] = ra;
+    size[ra] = (size[ra] ?? 0) + (size[rb] ?? 0);
+    hasBoundary[ra] = (hasBoundary[ra] ?? 0) | (hasBoundary[rb] ?? 0);
+    return ra;
+  };
+
+  type Edge = { i: number; j: number; w: number };
+  const edges: Edge[] = [];
+  for (let i = 0; i < k; i += 1) {
+    edges.push({ i, j: -1, w: boundW(defects[i]!) });
+    for (let j = i + 1; j < k; j += 1) edges.push({ i, j, w: pairW(defects[i]!, defects[j]!) });
+  }
+  edges.sort((a, b) => a.w - b.w || a.i - b.i || a.j - b.j);
+
+  const adj: number[][] = Array.from({ length: k }, () => []);
+  const boundaryAt = new Int32Array(k).fill(-1);
+  let oddLeft = k;
+  for (const e of edges) {
+    if (oddLeft === 0) break;
+    if (e.j === -1) {
+      const r = find(e.i);
+      if (!odd(r)) continue;
+      hasBoundary[r] = 1;
+      boundaryAt[e.i] = 1;
+      oddLeft -= 1;
+      continue;
+    }
+    const ra = find(e.i);
+    const rb = find(e.j);
+    if (ra === rb) continue;
+    const oa = odd(ra);
+    const ob = odd(rb);
+    if (!oa && !ob) continue;
+    adj[e.i]!.push(e.j);
+    adj[e.j]!.push(e.i);
+    const nr = union(e.i, e.j);
+    const nowOdd = odd(nr);
+    oddLeft += nowOdd ? 1 : 0;
+    oddLeft -= (oa ? 1 : 0) + (ob ? 1 : 0);
+  }
+
+  const pairs: [SpaceTimeDefect, SpaceTimeDefect | null][] = [];
+  const seen = new Uint8Array(k);
+  const dfs = (u: number, parentIdx: number): boolean => {
+    seen[u] = 1;
+    let leftover = true;
+    for (const v of adj[u]!) {
+      if (v === parentIdx) continue;
+      if (dfs(v, u)) {
+        pairs.push([defects[u]!, defects[v]!]);
+        leftover = !leftover;
+      }
+    }
+    return leftover;
+  };
+  for (let i = 0; i < k; i += 1) {
+    if (seen[i]) continue;
+    let root = i;
+    const stack = [i];
+    const vis = new Uint8Array(k);
+    vis[i] = 1;
+    while (stack.length > 0) {
+      const u = stack.pop()!;
+      if (boundaryAt[u] === 1) root = u;
+      for (const v of adj[u]!) {
+        if (vis[v]) continue;
+        vis[v] = 1;
+        stack.push(v);
+      }
+    }
+    if (dfs(root, -1)) pairs.push([defects[root]!, null]);
+  }
+  return pairs;
+}
+
+/**
+ * Minimum-weight matching of 2D syndrome defects. Exact bitmask DP for ≤ EXACT_MATCH_LIMIT
+ * defects, union-find clustering beyond. Returns the data-qubit correction and the pairing.
  */
 export function decodeMatching(lat: Lattice, synd: Uint8Array): { correction: Uint8Array; pairs: [Defect, Defect | null][]; exact: boolean } {
-  const defects: Defect[] = [];
-  for (let r = 0; r < lat.d; r += 1) for (let c = 0; c < lat.d - 1; c += 1) if (synd[lat.check(r, c)] === 1) defects.push({ r, c });
-  const k = defects.length;
-  const pairs: [Defect, Defect | null][] = [];
+  const defects: SpaceTimeDefect[] = [];
+  for (let r = 0; r < lat.d; r += 1) for (let c = 0; c < lat.d - 1; c += 1) if (synd[lat.check(r, c)] === 1) defects.push({ r, c, t: 0 });
+  const { pairs: stPairs, exact } = matchDefects(defects, lat.d, pairCost, (a) => boundaryCost(a, lat.d));
+  const pairs: [Defect, Defect | null][] = stPairs.map(([a, b]) => [a, b]);
   const correction = new Uint8Array(lat.n);
-  if (k === 0) return { correction, pairs, exact: true };
-
-  if (k <= EXACT_MATCH_LIMIT) {
-    const full = (1 << k) - 1;
-    const memo = new Float64Array(1 << k).fill(-1);
-    const choice = new Int32Array(1 << k).fill(-2); // -1 = boundary, else partner index
-    const solve = (mask: number): number => {
-      if (mask === 0) return 0;
-      if (memo[mask]! >= 0) return memo[mask]!;
-      let i = 0;
-      while (((mask >> i) & 1) === 0) i += 1;
-      const rest = mask & ~(1 << i);
-      let best = boundaryCost(defects[i]!, lat.d) + solve(rest);
-      let pick = -1;
-      for (let j = i + 1; j < k; j += 1) {
-        if (((rest >> j) & 1) === 0) continue;
-        const cost = pairCost(defects[i]!, defects[j]!) + solve(rest & ~(1 << j));
-        if (cost < best) {
-          best = cost;
-          pick = j;
-        }
-      }
-      memo[mask] = best;
-      choice[mask] = pick;
-      return best;
-    };
-    solve(full);
-    let mask = full;
-    while (mask !== 0) {
-      let i = 0;
-      while (((mask >> i) & 1) === 0) i += 1;
-      const pick = choice[mask]!;
-      if (pick === -1) {
-        pairs.push([defects[i]!, null]);
-        mask &= ~(1 << i);
-      } else {
-        pairs.push([defects[i]!, defects[pick]!]);
-        mask &= ~(1 << i) & ~(1 << pick);
-      }
-    }
-    for (const [a, b] of pairs) paintPath(lat, correction, a, b);
-    return { correction, pairs, exact: true };
-  }
-
-  // greedy: repeatedly take the globally cheapest available pairing (or boundary)
-  const alive = defects.map(() => true);
-  let remaining = k;
-  while (remaining > 0) {
-    let best = Number.POSITIVE_INFINITY;
-    let bi = -1;
-    let bj = -1;
-    for (let i = 0; i < k; i += 1) {
-      if (!alive[i]) continue;
-      const bc = boundaryCost(defects[i]!, lat.d);
-      if (bc < best) {
-        best = bc;
-        bi = i;
-        bj = -1;
-      }
-      for (let j = i + 1; j < k; j += 1) {
-        if (!alive[j]) continue;
-        const pc = pairCost(defects[i]!, defects[j]!);
-        if (pc < best) {
-          best = pc;
-          bi = i;
-          bj = j;
-        }
-      }
-    }
-    alive[bi] = false;
-    remaining -= 1;
-    if (bj === -1) pairs.push([defects[bi]!, null]);
-    else {
-      alive[bj] = false;
-      remaining -= 1;
-      pairs.push([defects[bi]!, defects[bj]!]);
-    }
-  }
   for (const [a, b] of pairs) paintPath(lat, correction, a, b);
-  return { correction, pairs, exact: false };
+  return { correction, pairs, exact };
 }
 
 export function xor(a: Uint8Array, b: Uint8Array): Uint8Array {
@@ -228,6 +330,57 @@ export function trialPauli(lat: Lattice, p: number, rand: () => number): boolean
   const err = sampleErrors(lat, p, rand);
   const { correction } = decodeMatching(lat, syndrome(lat, err));
   return isLogicalError(lat, xor(err, correction));
+}
+
+export type PhenoOpts = {
+  /** Data-qubit X probability per round. */
+  pData: number;
+  /** Check-measurement flip probability per noisy round. */
+  pMeas: number;
+  /** Number of noisy rounds. Default: the code distance. */
+  rounds?: number;
+};
+
+/**
+ * Phenomenological (2+1 D) noise: data X errors with probability pData before each of `rounds`
+ * noisy syndrome extractions (each check flipped with probability pMeas), then one final perfect
+ * round. Defects are *changes* in a check between consecutive rounds. Matching cost is Manhattan
+ * in space plus |Δt| in time; a defect may also match to a rough boundary at its column distance.
+ */
+export function trialPhenomenological(lat: Lattice, p: number, rand: () => number, opts?: PhenoOpts): boolean {
+  const pData = opts?.pData ?? p;
+  const pMeas = opts?.pMeas ?? p;
+  const rounds = opts?.rounds ?? lat.d;
+  const acc = new Uint8Array(lat.n);
+  const outcomes: Uint8Array[] = [new Uint8Array(lat.m)];
+  for (let t = 0; t < rounds; t += 1) {
+    for (let e = 0; e < lat.n; e += 1) if (rand() < pData) acc[e] = (acc[e] ?? 0) ^ 1;
+    const s = syndrome(lat, acc);
+    for (let c = 0; c < lat.m; c += 1) if (rand() < pMeas) s[c] = (s[c] ?? 0) ^ 1;
+    outcomes.push(s);
+  }
+  outcomes.push(syndrome(lat, acc));
+  const { correction } = decodeSpacetime(lat, outcomes);
+  return isLogicalError(lat, xor(acc, correction));
+}
+
+/** Decode a history of check outcomes (including the initial all-zero round). */
+export function decodeSpacetime(lat: Lattice, outcomes: readonly Uint8Array[]): { correction: Uint8Array; pairs: [SpaceTimeDefect, SpaceTimeDefect | null][]; exact: boolean } {
+  const defects: SpaceTimeDefect[] = [];
+  for (let t = 1; t < outcomes.length; t += 1) {
+    const prev = outcomes[t - 1]!;
+    const cur = outcomes[t]!;
+    for (let r = 0; r < lat.d; r += 1) {
+      for (let c = 0; c < lat.d - 1; c += 1) {
+        const id = lat.check(r, c);
+        if (((cur[id] ?? 0) ^ (prev[id] ?? 0)) === 1) defects.push({ r, c, t });
+      }
+    }
+  }
+  const { pairs, exact } = matchDefects(defects, lat.d);
+  const correction = new Uint8Array(lat.n);
+  for (const [a, b] of pairs) paintPath(lat, correction, a, b);
+  return { correction, pairs, exact };
 }
 
 /**
@@ -280,6 +433,8 @@ export function lambdaFromRatio(pLSmall: number, pLLarge: number): number {
   return pLSmall / pLLarge;
 }
 
-/** Standard planar-code thresholds for reference (independent noise, perfect syndromes). */
+/** Standard planar-code thresholds for reference. */
 export const PAULI_THRESHOLD = 0.103;
 export const ERASURE_THRESHOLD = 0.5;
+/** Phenomenological noise (data + measurement errors, d rounds, MWPM): Wang–Harrington–Preskill 2003. */
+export const PHENO_THRESHOLD = 0.03;

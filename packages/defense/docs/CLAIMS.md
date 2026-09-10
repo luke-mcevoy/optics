@@ -113,7 +113,7 @@ each quoted fragment appears verbatim in the paper text when `PAPER_TXT` is set.
 | --- | --- | --- | --- |
 | `beams.pairSpacingUm` | 2 | Not in this paper | Intra-pair gate spacing taken from the group’s earlier gate work (ref. 36, Evered et al. 2023). |
 
-## Standard atomic data used alongside the paper (20)
+## Standard atomic data used alongside the paper (21)
 
 | Quantity | Value | Source |
 | --- | --- | --- |
@@ -135,6 +135,7 @@ each quoted fragment appears verbatim in the paper text when `PAPER_TXT` is set.
 | RY_RB_THZ | R_Rb·c = 3289.82 THz (foundations) | Sansonetti, J. Phys. Chem. Ref. Data 35, 301 (2006) |
 | Rydberg lifetimes | τ₀ n*³ radiative scaling and the 300 K black-body rate ∝ 1/n² (foundations) | Beterov et al., Phys. Rev. A 79, 052504 (2009) |
 | PAULI_THRESHOLD | ≈ 10.3% for independent noise, perfect syndromes, matching decoder (foundations) | Dennis, Kitaev, Landahl & Preskill, J. Math. Phys. 43, 4452 (2002); Wang, Harrington & Preskill (2003) |
+| PHENO_THRESHOLD | ≈ 2.9–3.3% for phenomenological noise (data + measurement errors, d rounds, MWPM); board line at 3.0% (foundations) | Wang, Harrington & Preskill, Ann. Phys. 303, 31 (2003) |
 | ERASURE_THRESHOLD | 50% = square-lattice bond-percolation point (foundations) | Stace, Barrett & Doherty, Phys. Rev. Lett. 102, 200501 (2009) |
 | Tsirelson bound 2√2 | maximal quantum CHSH value (foundations) | Cirel’son, Lett. Math. Phys. 4, 93 (1980) |
 
