@@ -9,7 +9,7 @@ function Masthead() {
         <span>foundations — the physics the guide assumes</span>
       </p>
       <p className="mast-meta">
-        <a href="#/">the guide</a> · <a href="#/foundations">all foundations</a>
+        <a href="#/guide">the guide</a> · <a href="#/foundations">all foundations</a>
       </p>
     </header>
   );

@@ -3,12 +3,14 @@
  * instrument is active, glass, mirrors, modulators, coils, beams between components and
  * the cables that drive them. Everything reads one shared `ActivityRef` each frame.
  */
-import { useMemo, useRef } from 'react';
+import { useContext, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Line } from '@react-three/drei';
+import { Line, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Activity, Instrument } from '../data/program.ts';
 import { Callout } from './Callout.tsx';
+import { OpticalPost, Screw } from './LabHardware.tsx';
+import { InstrumentFocus } from './InstrumentFocus.ts';
 
 export type ActivityRef = { current: Activity };
 export type V3 = readonly [number, number, number];
@@ -62,16 +64,22 @@ export function Device({
     const m = matRef.current;
     if (m === null) return;
     const a = id === undefined ? 0 : activity.current[id];
-    m.emissiveIntensity = (0.04 + 1.1 * a) * glowScale;
+    m.emissiveIntensity = (0.015 + 0.18 * a) * glowScale;
   });
   return (
-    <group position={[...position]} rotation={[0, rotationY, 0]}>
+    <group position={[...position]} rotation={[0, rotationY, 0]} userData={{ instrument: id }}>
       {hollow ? null : (
-        <mesh>
-          <boxGeometry args={[...size]} />
-          <meshStandardMaterial ref={matRef} color="#232b36" metalness={0.4} roughness={0.55} emissive={emissive} emissiveIntensity={0.04} />
-        </mesh>
+        <RoundedBox args={[...size]} radius={Math.min(...size) * 0.07} smoothness={2}>
+          <meshStandardMaterial ref={matRef} color="#323e49" metalness={0.7} roughness={0.3} emissive={emissive} emissiveIntensity={0.04} />
+        </RoundedBox>
       )}
+      {!hollow && <>
+        <mesh position={[0, 0, size[2] / 2 + 0.006]}><boxGeometry args={[size[0] * 0.92, size[1] * 0.78, 0.014]} /><meshStandardMaterial color="#111a23" metalness={0.55} roughness={0.35} /></mesh>
+        {[-1, 1].flatMap(x => [-1, 1].map(y => <Screw key={`${x}/${y}`} at={[x * size[0] * 0.4, y * size[1] * 0.32, size[2] / 2 + 0.02]} radius={0.018} />))}
+        {Array.from({ length: 6 }, (_, i) => <mesh key={i} position={[(i - 2.5) * size[0] * 0.1, size[1] / 2 + 0.002, 0]}><boxGeometry args={[size[0] * 0.025, 0.005, size[2] * 0.58]} /><meshBasicMaterial color="#0a1219" /></mesh>)}
+        <mesh position={[-size[0] * 0.23, 0, size[2] / 2 + 0.018]}><planeGeometry args={[size[0] * 0.27, size[1] * 0.32]} /><meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.18} /></mesh>
+        <mesh position={[size[0] * 0.23, 0, size[2] / 2 + 0.04]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[size[1] * 0.12, size[1] * 0.12, 0.055, 20]} /><meshStandardMaterial color="#8495a1" metalness={0.9} roughness={0.25} /></mesh>
+      </>}
       <lineSegments geometry={edges}>
         <lineBasicMaterial color={color} transparent opacity={0.45} />
       </lineSegments>
@@ -112,16 +120,17 @@ const GLASS = { color: '#9fd3ff', metalness: 0.1, roughness: 0.05, transparent: 
 export function Lens({ position, axis, radius = 0.28 }: { position: V3; axis: V3; radius?: number }) {
   const q = useMemo(() => quatFromTo(UP, new THREE.Vector3(...axis)), [axis]);
   return (
-    <group position={[...position]} quaternion={q}>
+    <>{!(position[0] === 0 && position[2] === 0) && <OpticalPost position={position} top={position[1] - radius} />}<group position={[...position]} quaternion={q}>
       <mesh>
         <cylinderGeometry args={[radius, radius, 0.05, 32]} />
         <meshStandardMaterial {...GLASS} />
       </mesh>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[radius + 0.03, 0.02, 8, 48]} />
+        <torusGeometry args={[radius + 0.025, 0.048, 12, 48]} />
         <meshStandardMaterial color="#2a2f36" metalness={0.7} roughness={0.35} />
       </mesh>
-    </group>
+      {[-0.04, 0.04].map(y => <mesh key={y} position={[0, y, 0]} rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[radius + 0.028, 0.012, 8, 48]} /><meshStandardMaterial color="#71818d" metalness={0.88} roughness={0.2} /></mesh>)}
+    </group></>
   );
 }
 
@@ -145,7 +154,9 @@ export function Plate({
 }) {
   const q = useMemo(() => quatFromTo(Z, new THREE.Vector3(...normal)), [normal]);
   return (
-    <group position={[...position]} quaternion={q}>
+    <>{!(position[0] === 0 && position[2] === 0) && <OpticalPost position={position} />}<group position={[...position]} quaternion={q}>
+      <RoundedBox args={[size[0] + 0.12, size[1] + 0.12, 0.065]} radius={0.018} position={[0, 0, -0.055]}><meshStandardMaterial color="#222e38" metalness={0.75} roughness={0.3} /></RoundedBox>
+      {[-1, 1].map(x => <Screw key={x} at={[x * (size[0] / 2 + 0.025), size[1] / 2 + 0.025, 0]} radius={0.02} />)}
       <mesh>
         <boxGeometry args={[size[0], size[1], thickness]} />
         <meshStandardMaterial color={color} metalness={0.85} roughness={0.15} transparent={opacity < 1} opacity={opacity} depthWrite={opacity >= 1} />
@@ -155,7 +166,7 @@ export function Plate({
           {label}
         </Callout>
       ) : null}
-    </group>
+    </group></>
   );
 }
 
@@ -244,7 +255,7 @@ export function AODCrystal({
     material.uniforms.uGain!.value = activity.current[id];
   });
   return (
-    <group position={[...position]} quaternion={q}>
+    <group position={[...position]} quaternion={q} userData={{ instrument: id }}>
       <mesh material={material}>
         <boxGeometry args={[0.3, 0.3, 0.16]} />
       </mesh>
@@ -294,7 +305,7 @@ export function SLMPanel({ position, normal, id, activity, label }: { position: 
     m.emissiveIntensity = 0.1 + 0.9 * activity.current[id];
   });
   return (
-    <group position={[...position]} quaternion={q}>
+    <group position={[...position]} quaternion={q} userData={{ instrument: id }}>
       <mesh position={[0, 0, -0.05]}>
         <boxGeometry args={[0.9, 0.7, 0.08]} />
         <meshStandardMaterial color="#12161c" metalness={0.5} roughness={0.5} />
@@ -330,6 +341,10 @@ export function Coil({ position, radius, axis, id, activity, tube = 0.06, label 
         <torusGeometry args={[radius, tube, 12, 72]} />
         <meshStandardMaterial ref={matRef} color="#8a5a30" metalness={0.8} roughness={0.35} emissive="#ff8a3d" emissiveIntensity={0.02} />
       </mesh>
+      {[-2, -1, 1, 2].map(i => <mesh key={i} position={[0, 0, i * tube * 0.7]}>
+        <torusGeometry args={[radius, tube * 0.42, 8, 72]} />
+        <meshStandardMaterial color="#ad6b3d" metalness={0.86} roughness={0.25} />
+      </mesh>)}
       {label !== undefined ? (
         <Callout position={[radius + 0.1, 0.15, 0]} fixed small showWithin={14}>
           {label}
@@ -433,6 +448,7 @@ export type BeamPathProps = {
 };
 
 export function BeamPath({ points, color, gate, activity, radius = 0.035, radii, opacity = 0.85, k = 12, speed = 18, mode = 1, scale = 1 }: BeamPathProps) {
+  const focus = useContext(InstrumentFocus);
   const segs = useMemo(() => {
     const out: { mid: THREE.Vector3; q: THREE.Quaternion; len: number; r0: number; r1: number }[] = [];
     for (let i = 0; i + 1 < points.length; i += 1) {
@@ -463,7 +479,7 @@ export function BeamPath({ points, color, gate, activity, radius = 0.035, radii,
   useFrame((state) => {
     let g = 1;
     for (const id of gate) g = Math.min(g, activity.current[id]);
-    g *= scale;
+    g *= scale * (focus === null || gate.some(id => focus.includes(id)) ? 1 : 0.08);
     for (const { core, halo } of materials) {
       core.uniforms.uTime!.value = state.clock.elapsedTime;
       core.uniforms.uGain!.value = g;
@@ -489,6 +505,7 @@ export function BeamPath({ points, color, gate, activity, radius = 0.035, radii,
 
 /** Converging or diverging cone of light (objective → atoms, atoms → objective). */
 export function LightCone({ from, to, r0, r1, color, gate, activity, opacity = 0.35, scale = 1 }: { from: V3; to: V3; r0: number; r1: number; color: string; gate: readonly Instrument[]; activity: ActivityRef; opacity?: number; scale?: number }) {
+  const focus = useContext(InstrumentFocus);
   const a = useMemo(() => new THREE.Vector3(...from), [from]);
   const b = useMemo(() => new THREE.Vector3(...to), [to]);
   const d = useMemo(() => b.clone().sub(a), [a, b]);
@@ -499,7 +516,7 @@ export function LightCone({ from, to, r0, r1, color, gate, activity, opacity = 0
     let g = 1;
     for (const id of gate) g = Math.min(g, activity.current[id]);
     material.uniforms.uTime!.value = state.clock.elapsedTime;
-    material.uniforms.uGain!.value = g * scale;
+    material.uniforms.uGain!.value = g * scale * (focus === null || gate.some(id => focus.includes(id)) ? 1 : 0.08);
     material.uniforms.uHalfLen!.value = d.length() / 2;
   });
   return (
@@ -514,6 +531,8 @@ export function LightCone({ from, to, r0, r1, color, gate, activity, opacity = 0
 /* ------------------------------------------------------------------------------------------ */
 
 export function Cable({ points, id, activity, color = '#7d8b99', pulses = 3, speed = 1.4 }: { points: readonly V3[]; id: Instrument; activity: ActivityRef; color?: string; pulses?: number; speed?: number }) {
+  const focus = useContext(InstrumentFocus);
+  const emphasized = focus === null || focus.includes(id);
   const curve = useMemo(() => new THREE.CatmullRomCurve3(points.map((p) => new THREE.Vector3(...p)), false, 'catmullrom', 0.0), [points]);
   const dots = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
@@ -527,7 +546,7 @@ export function Cable({ points, id, activity, color = '#7d8b99', pulses = 3, spe
       const t = ((state.clock.elapsedTime * speed) / 2 + i / pulses) % 1;
       curve.getPointAt(t, tmp);
       dummy.position.copy(tmp);
-      dummy.scale.setScalar(a > 0.05 ? 0.5 + a : 0.0001);
+      dummy.scale.setScalar(a > 0.05 && emphasized ? 0.5 + a : 0.0001);
       dummy.updateMatrix();
       m.setMatrixAt(i, dummy.matrix);
     }
@@ -535,7 +554,7 @@ export function Cable({ points, id, activity, color = '#7d8b99', pulses = 3, spe
   });
   return (
     <group>
-      <Line points={linePts} color={color} lineWidth={1} transparent opacity={0.55} />
+      <Line points={linePts} color={color} lineWidth={1} transparent opacity={emphasized ? 0.55 : 0.05} />
       <instancedMesh ref={dots} args={[undefined, undefined, pulses]} frustumCulled={false}>
         <sphereGeometry args={[0.045, 8, 8]} />
         <meshBasicMaterial color="#ffe9a8" toneMapped={false} />

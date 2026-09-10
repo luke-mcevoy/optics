@@ -1,5 +1,66 @@
 # How to build a quantum computer out of atoms
 
+The app opens with the original detailed paper guide. The **Inside the
+instrument** link (`#/instrument`) expands its complete optical table into
+a large inspection view. It starts with **Walk me through it**: six paused
+events with numbered landmarks, directional path highlights, and a short
+explanation of the effect on the atoms. Other operating beams are visually
+dimmed without changing the instrument program. **Explore freely** opens
+nine subsystems, selectable equipment, plain-language
+explanations alongside the original physics, and a shared timeline that stays
+at the same event when switching between table and magnified atom views.
+The original hardware models now have optical posts and mounts, equipment
+panels, a machined objective barrel, wound coils, and a perforated table.
+Mechanical geometry is illustrative; the existing program still drives the
+light paths and atomic choreography. Run `node scripts/instrument-smoke.mjs`
+for its browser checks (same Playwright setup described below).
+
+An optional **Inside the Harvard–MIT quantum experiment** tour at
+`#/journey/0` provides a figure-by-figure overview. Start with a custom
+optical-apparatus cutaway, then explore the paper's mechanisms and results:
+
+| Scene | Paper connection |
+| --- | --- |
+| Move atoms between functional zones | Fig. 1a |
+| Read the bit and retain the atom; distinguish loss | Fig. 1b |
+| Compare distance-3 and distance-5 error correction | Fig. 2d, reported values and uncertainty |
+| Operate transversal gates or joint parity measurements | Fig. 3 |
+| Prepare resources, entangle, measure, and track branches | Fig. 4 |
+| Transfer logical information and refresh physical atoms | Figs. 5–6 |
+
+Open `#/guide` for the original detailed walkthrough or `#/basics/0` for
+the optional qubit, interference, and entanglement primer. Existing chapter
+and Foundations links still work.
+
+![The Harvard–MIT paper, optional overview](docs/journey-hero.png)
+
+Each paper scene links to its source figure and separates measured results
+from explanatory geometry. The apparatus is an artistic cutaway; enlarged
+atoms and reduced block counts make the choreography legible. Surface-code
+patches have valid check supports, but the scene does not simulate a decoder.
+The evidence panels explain postselection, software feedforward, and the
+limits of the recycling experiment. The optional primer uses the existing
+state-vector kernel and joint Born-rule sampling; its ideal three-bit
+correction example is explicitly separate from the paper's surface codes.
+
+The journey supports keyboard navigation, reduced motion, mobile layouts,
+automatic playback, and graphics-context recovery. Only the current scene
+mounts a WebGL canvas; the guide and Foundations code load on demand.
+
+Verification: `npm test` includes analytical circuits, syndrome checks, and
+surface-code check commutation. Run `node scripts/paper-smoke.mjs` for the
+paper interactions and `node scripts/journey-smoke.mjs` for the optional
+primer, playback, and graphics recovery. Both use the server on port 5200
+and require Playwright (or `PLAYWRIGHT_MODULE` pointing to its module).
+They also check mobile layouts and old routes. Screenshots default to
+`/private/tmp/harvard-paper-journey` and `/private/tmp/quantum-basics`;
+override with `JOURNEY_SCREENSHOTS` and the server with `JOURNEY_URL`.
+
+In this monorepo, refresh the personal site's embedded copy with
+`npm run snapshot --workspace @optics/defense`. This builds with a portable
+relative asset base and replaces obsolete generated assets under
+`packages/site/public/defense/`. It does not publish the site.
+
 **Live site:** [https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/](https://luke-mcevoy.github.io/neutral-atom-compute-visualizer/)
 
 <p align="center">

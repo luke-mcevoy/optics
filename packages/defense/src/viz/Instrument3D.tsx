@@ -8,10 +8,15 @@
  */
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { Html, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { Figure, Panel } from '../components/Figure.tsx';
 import { Steps, type StepDef } from '../components/Steps.tsx';
 import { PAPER } from '../data/paper.ts';
+import { INSTRUMENT_TOUR } from '../data/instrumentTour.ts';
+import { INSTRUMENT_GUIDE, type GuideStop } from '../data/instrumentGuide.ts';
+import { InstrumentFocus } from '../viz3d/InstrumentFocus.ts';
+import './instrument-lab.css';
 import {
   type Activity,
   emptyActivity,
@@ -27,7 +32,8 @@ import {
 } from '../data/program.ts';
 import { collectionHalfAngle } from '../physics/beams.ts';
 import { AtomField, BeamSheet, GaussianTube } from '../viz3d/Beams.tsx';
-import { Callout } from '../viz3d/Callout.tsx';
+import { Callout, ShowCallouts } from '../viz3d/Callout.tsx';
+import { ObjectiveBarrel, OpticalTable } from '../viz3d/LabHardware.tsx';
 import {
   type ActivityRef,
   AODCrystal,
@@ -525,20 +531,24 @@ function ArrayInset({ clock }: { clock: RefObject<Clock> }) {
 
 /* --------------------------------------------- scene --------------------------------------------- */
 
-function InstrumentScene({ clock }: { clock: RefObject<Clock> }) {
+function InstrumentScene({ clock, onSelect }: { clock: RefObject<Clock>; onSelect?: (id: Instrument) => void }) {
   const activity = useMemo<ActivityRef>(() => ({ current: clock.current?.act ?? emptyActivity() }), [clock]);
 
   return (
-    <group>
+    <group onClick={(e) => {
+      if (e.delta > 5 || !onSelect) return;
+      let object: THREE.Object3D | null = e.object;
+      while (object) {
+        const id = object.userData.instrument as Instrument | undefined;
+        if (id) { e.stopPropagation(); onSelect(id); break; }
+        object = object.parent;
+      }
+    }}>
       <hemisphereLight args={['#c9d6e6', '#0a0c10', 0.55]} />
       <directionalLight position={[-6, 9, 4]} intensity={1.2} color="#e8eef8" />
       <directionalLight position={[8, 6, -6]} intensity={0.6} color="#b8c8dc" />
       {/* table */}
-      <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[21, 15.5]} />
-        <meshStandardMaterial color="#0f1216" roughness={0.9} metalness={0.1} />
-      </mesh>
-      <gridHelper args={[21, 42, '#1c2128', '#151a20']} position={[0, -0.01, 0]} />
+      <OpticalTable />
 
       {/* ---------------------------------- vacuum cell, coils, detection column ---------------------------------- */}
       <GlassCell position={CELL} size={[1.3, 1.3, 1.3]} />
@@ -550,16 +560,11 @@ function InstrumentScene({ clock }: { clock: RefObject<Clock> }) {
 
       {/* objective */}
       <group position={[0, (OBJ_BOTTOM + OBJ_TOP) / 2, 0]}>
-        <mesh>
-          <cylinderGeometry args={[0.42, 0.3, OBJ_TOP - OBJ_BOTTOM, 40]} />
-          <meshStandardMaterial color="#1b2430" metalness={0.6} roughness={0.25} />
-        </mesh>
-        <mesh position={[0, -(OBJ_TOP - OBJ_BOTTOM) / 2 - 0.005, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[0.28, 32]} />
-          <meshStandardMaterial color="#9fd3ff" transparent opacity={0.4} roughness={0.05} />
-        </mesh>
+        <ObjectiveBarrel height={OBJ_TOP - OBJ_BOTTOM} />
         <Callout position={[0.75, 0.05, 0]} fixed showWithin={14}>{`objective · NA ${PAPER.imaging.na}`}</Callout>
       </group>
+      {/* Support rails sit clear of the shared vertical optical path. */}
+      {[-0.57, 0.57].map(x => <mesh key={x} position={[x, 2.35, -0.6]}><cylinderGeometry args={[0.035, 0.035, 4.5, 16]} /><meshStandardMaterial color="#8a9aa5" metalness={0.9} roughness={0.22} /></mesh>)}
       <Plate position={RAMAN.dich2} normal={[-1, 1, 0]} color="#7fd6a8" opacity={0.6} size={[0.5, 0.5]} label="dichroic (Raman in)" />
       <Plate position={TRAP.dich1} normal={[1, 1, 0]} color="#f0c070" opacity={0.6} size={[0.5, 0.5]} label="dichroic (852 in, 780 out)" />
       <Lens position={[0, Y_TUBE, 0]} axis={[0, 1, 0]} radius={0.3} />
@@ -799,31 +804,72 @@ function RackTimeline({ clock, onScrub }: { clock: RefObject<Clock>; onScrub: (u
 
 /* --------------------------------------------- figure --------------------------------------------- */
 
-export function Instrument3D() {
-  const [step, setStep] = useState(0);
+function GuideMarks({ stop }: { stop: GuideStop }) {
+  const arrows = useMemo(() => stop.paths.flatMap(path => path.slice(1).map((p, i) => {
+    const a = new THREE.Vector3(...path[i]!), b = new THREE.Vector3(...p);
+    return { at: a.clone().lerp(b, 0.65), rotation: new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.sub(a).normalize()) };
+  })), [stop]);
+  return <group>
+    {stop.paths.map((path, i) => <Line key={i} points={path} color={stop.color} lineWidth={2} transparent opacity={0.65} dashed dashSize={0.13} gapSize={0.09} />)}
+    {arrows.map((a, i) => <mesh key={i} position={a.at} quaternion={a.rotation}><coneGeometry args={[0.09, 0.24, 12]} /><meshBasicMaterial color={stop.color} toneMapped={false} /></mesh>)}
+    {stop.pins.map((pin, i) => <group key={pin.label} position={pin.at}>
+      <Line points={[[0, 0, 0], [0, 0.35, 0]]} color={stop.color} lineWidth={1} />
+      <Html center position={[0, 0.4, 0]} zIndexRange={[6, 0]} style={{ pointerEvents: 'none' }}><div className="lab-guide-pin"><b style={{ background: stop.color }}>{i + 1}</b><span>{pin.label}</span></div></Html>
+    </group>)}
+  </group>;
+}
+
+export function Instrument3D({ immersive = false }: { immersive?: boolean }) {
+  const [guided, setGuided] = useState(immersive);
+  const [guideIndex, setGuideIndex] = useState(0);
+  const [freeStep, setStep] = useState(0);
+  const guidance = INSTRUMENT_GUIDE[guideIndex]!;
+  const step = guided ? guidance.subsystem : freeStep;
   const tour = TOUR[step] ?? TOUR[0]!;
   const phaseEl = useRef<HTMLSpanElement | null>(null);
   const clock = useRef<Clock>({ u: 0, playing: true, window: [0, 1], act: emptyActivity() });
   const [playing, setPlaying] = useState(true);
+  const [labels, setLabels] = useState(!immersive);
+  const [rackOpen, setRackOpen] = useState(false);
+  const [view, setView] = useState<number | null>(null);
+  const [cameraReset, setCameraReset] = useState(0);
+  const sceneTour = TOUR[view ?? step] ?? tour;
+  const cameraRig = useMemo<CameraRig>(() => guided && view === null ? guidance.rig : immersive && sceneTour === TOUR[0]
+    ? { position: [11, 15, 21], target: [0, 0.8, -0.5] }
+    : { ...sceneTour.rig }, [sceneTour, cameraReset, immersive, guided, guidance, view]);
+  const readout = INSTRUMENT_TOUR[step]!;
+  const progress = useRef<HTMLInputElement>(null);
+  const progressText = useRef<HTMLOutputElement>(null);
+
+  useRaf(() => {
+    if (progress.current) progress.current.value = String(Math.round(clock.current.u * 1000));
+    if (progressText.current) progressText.current.textContent = phaseAt(clock.current.u).label;
+  }, immersive);
+
+  useEffect(() => {
+    if (immersive) { document.title = 'Inside the Harvard–MIT instrument · Nature'; window.scrollTo(0, 0); }
+  }, [immersive]);
 
   useEffect(() => {
     const c = clock.current;
-    c.window = tour.window;
-    c.u = tour.window[0];
-    c.playing = true;
-    setPlaying(true);
-  }, [tour]);
+    c.window = guided ? [0, 1] : tour.window;
+    c.u = guided ? guidance.time : immersive && step === 0 ? 0.36 : tour.window[0];
+    c.playing = !guided && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setPlaying(c.playing);
+    setView(null);
+  }, [tour, immersive, step, guided, guidance]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== ' ' || (e.target as HTMLElement | null)?.tagName === 'BUTTON') return;
+      if (guided || e.key !== ' ' || ['BUTTON', 'INPUT', 'TEXTAREA', 'SELECT', 'A', 'SUMMARY'].includes((e.target as HTMLElement | null)?.tagName ?? '')) return;
+      e.preventDefault();
       const c = clock.current;
       c.playing = !c.playing;
       setPlaying(c.playing);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [guided]);
 
   const scrub = (u: number) => {
     const c = clock.current;
@@ -836,6 +882,10 @@ export function Instrument3D() {
     const c = clock.current;
     c.playing = !c.playing;
     setPlaying(c.playing);
+  };
+  const selectInstrument = (id: Instrument) => {
+    const targets: Partial<Record<Instrument, number>> = { trapLaser: 1, slm: 1, aod: 1, camera: 2, computer: 7, ramanLaser: 3, ramanAod: 3, microwave: 7, ryd420: 4, ryd1013: 4, lattice: 5, imaging: 5, shield: 6, awgRearr: 7, awgMove: 7, awgRydberg: 7, awgRaman: 7, awgRamanAod: 7 };
+    if (targets[id] !== undefined) { setGuided(false); setStep(targets[id]!); }
   };
 
   const steps: readonly StepDef[] = [
@@ -990,8 +1040,36 @@ export function Instrument3D() {
     },
   ];
 
+  const stage = <Stage3D
+    studio tall rig={cameraRig} autoRotate={false}
+    minDistance={sceneTour.minDistance ?? 1.5} maxDistance={42} fogRange={[48, 95]}
+    overlay={<div className={`stage-phase${guided ? ' guided-phase' : ''}`}><span ref={phaseEl} /></div>}
+  >
+    <ClockDriver clock={clock} phaseEl={phaseEl} />
+    <InstrumentFocus.Provider value={guided ? guidance.focus : null}><ShowCallouts.Provider value={labels}><InstrumentScene clock={clock} onSelect={selectInstrument} /></ShowCallouts.Provider></InstrumentFocus.Provider>
+    {guided && view === null && <GuideMarks stop={guidance} />}
+  </Stage3D>;
+
+  if (immersive) return <main className={`instrument-lab${guided ? ' lab-guided' : ''}`}>
+    <header className="lab-header"><a href="#control">← Paper guide</a><div><span>HARVARD · MIT · NATURE</span><h1>Inside the instrument</h1></div><a href="https://www.nature.com/articles/s41586-025-09848-5" target="_blank" rel="noreferrer">Read the paper ↗</a></header>
+    <div className="lab-workspace">
+      <nav className="lab-subsystems" aria-label={guided ? 'Guided sequence' : 'Instrument subsystems'}><div className="lab-mode"><button aria-pressed={guided} onClick={() => { setGuided(true); setView(null); }}>Walk me through it</button><button aria-pressed={!guided} onClick={() => { setStep(step); setGuided(false); }}>Explore freely</button></div><span className="lab-kicker">{guided ? 'ONE EVENT AT A TIME' : 'EXPLORE THE MACHINE'}</span>{guided ? INSTRUMENT_GUIDE.map((s, i) => <button key={s.title} aria-pressed={i === guideIndex} onClick={() => { setGuideIndex(i); setView(null); }}><small>{i + 1}</small><span>{s.title}</span><i>↗</i></button>) : INSTRUMENT_TOUR.map((s, i) => <button key={s.name} aria-pressed={i === step} onClick={() => { setStep(i); setView(null); }}><small>{String(i + 1).padStart(2, '0')}</small><span>{s.name}</span><i>↗</i></button>)}</nav>
+      <section className={`lab-viewport${view === 8 || (view === null && step === 8) ? ' is-magnified' : ''}`} aria-label="Interactive optical instrument">
+        {stage}
+        {guided && <div className="lab-event-banner"><span>PAUSED · EVENT {guideIndex + 1} OF {INSTRUMENT_GUIDE.length}</span><h2>{guidance.title}</h2><p>{guidance.action}</p></div>}
+        <div className="lab-view-controls">{guided ? <span className="lab-guide-hint">Follow 1 → 2 → 3 on the table</span> : <><button aria-pressed={view === 0} onClick={() => setView(0)}>Whole table</button><button aria-pressed={view === 8} onClick={() => setView(8)}>Into the atoms ↗</button><button aria-pressed={labels} onClick={() => setLabels(!labels)}>Labels {labels ? 'on' : 'off'}</button></>}<button aria-label="Reset instrument camera" onClick={() => { setView(null); setCameraReset(n => n + 1); }}>↺</button></div>
+        <div className="lab-scale-note">{view === 8 || (view === null && step === 8) ? 'MAGNIFIED ATOM ARRAY' : 'SCHEMATIC OPTICAL TABLE'}<span>Hardware and sequence from the paper · geometry and pacing illustrative</span></div>
+      </section>
+      {guided && <aside className="lab-inspector lab-guided-inspector" aria-live="polite"><span className="lab-kicker">FIND THESE ON THE TABLE</span><ol className="lab-pin-key">{guidance.pins.map((pin, i) => <li key={pin.label}><b style={{ background: guidance.color }}>{i + 1}</b>{pin.label}</li>)}</ol><div className="lab-event-result"><span className="lab-kicker">WHAT CHANGES AT THE ATOMS</span><p>{guidance.result}</p></div><p className="lab-focus-note">The highlighted route is a guide for your eye. Other operating beams are dimmed. Arrows indicate direction; they do not depict individual photons.</p><details key={guideIndex} className="lab-deeper"><summary>Why does this work?</summary><p>{steps[step]!.text}</p></details><a className="lab-source" href={readout.anchor}>{readout.source} · detailed explanation ↗</a></aside>}
+      {!guided && <aside className="lab-inspector" aria-live="polite"><p className="lab-kicker">{String(step + 1).padStart(2, '0')} / 09 · {readout.name}</p><h2>{readout.title}</h2><p className="lab-explanation">{readout.text}</p><div className="lab-cause">{readout.chain.map((s, i) => <div key={s}><span>{i + 1}</span><p>{s}</p></div>)}</div><div className="lab-look"><span className="lab-kicker">WATCH FOR THIS</span><p>{readout.look}</p></div><details key={step} className="lab-deeper"><summary>Open the physics & apparatus details</summary><p>{steps[step]!.text}</p><a href={readout.anchor}>Continue in the full guide ↗</a></details><a className="lab-source" href="https://www.nature.com/articles/s41586-025-09848-5" target="_blank" rel="noreferrer">{readout.source} ↗</a><div className="lab-step-nav"><button disabled={step === 0} onClick={() => setStep(step - 1)}>← Previous</button><button disabled={step === TOUR.length - 1} onClick={() => setStep(step + 1)}>Next subsystem →</button></div></aside>}
+    </div>
+    {guided ? <div className="lab-guide-transport"><button disabled={guideIndex === 0} onClick={() => setGuideIndex(guideIndex - 1)}>← Previous event</button><p>Start with an assembled array. Follow one cycle of operations.<span>The scene waits for you. Use the numbered landmarks to follow the light.</span></p>{guideIndex < INSTRUMENT_GUIDE.length - 1 ? <button className="lab-guide-next" onClick={() => setGuideIndex(guideIndex + 1)}>Next event →</button> : <a href="#/journey/3">See the paper’s error-correction result →</a>}</div> : <section className="lab-sequence" aria-label="Synchronized experimental sequence"><div className="lab-sequence-head"><button className="lab-play" onClick={togglePlay}>{playing ? 'Ⅱ Pause sequence' : '▷ Play sequence'}</button><div><span className="lab-kicker">HAPPENING IN THE MACHINE</span><output ref={progressText} /></div><button aria-expanded={rackOpen} onClick={() => setRackOpen(!rackOpen)}>Control signals {rackOpen ? '−' : '+'}</button></div><input ref={progress} type="range" min="0" max="1000" defaultValue="0" aria-label="Scrub experimental sequence" onChange={e => scrub(Number(e.target.value) / 1000)} /><div className="lab-phase-buttons">{PHASES.map(phase => <button key={phase.id} onClick={() => scrub((phase.window[0] + phase.window[1]) / 2)}>{phase.label.replace('Load: ', '').replace('Entangle: ', '')}</button>)}</div>{rackOpen && <RackTimeline clock={clock} onScrub={scrub} />}</section>}
+    <footer className="lab-foot"><span>Bluvstein, Geim et al. · <em>Nature</em> 649, 39–46 (2026)</span><span>Display colours identify beam roles. Motion is slowed for explanation.</span></footer>
+  </main>;
+
   return (
-    <div className="board">
+    <div className="board instrument-board">
+      <a className="instrument-open" href="#/instrument">Open the instrument in a large inspection view ↗</a>
       <Steps steps={steps} current={step} onStep={setStep} />
       <div className="board-breakout">
       <Figure
@@ -1009,22 +1087,7 @@ export function Instrument3D() {
         }
       >
         <Panel tag="a" title="Seven laser colours, two AOD pairs, an SLM, coils, camera, and the rack that plays them" wide>
-          <Stage3D
-            tall
-            rig={tour.rig}
-            autoRotate={false}
-            minDistance={tour.minDistance ?? 1.5}
-            maxDistance={42}
-            fogRange={[48, 95]}
-            overlay={
-              <div className="stage-phase">
-                <span ref={phaseEl} />
-              </div>
-            }
-          >
-            <ClockDriver clock={clock} phaseEl={phaseEl} />
-            <InstrumentScene clock={clock} />
-          </Stage3D>
+          {stage}
           <div className="rack-row">
             <button type="button" className="rack-play" onClick={togglePlay}>
               {playing ? 'pause' : 'play'}
@@ -1045,3 +1108,5 @@ export function Instrument3D() {
     </div>
   );
 }
+
+export function InstrumentLab() { return <Instrument3D immersive />; }
