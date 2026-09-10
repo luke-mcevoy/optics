@@ -1,6 +1,6 @@
 import { type ReactNode, Suspense, useEffect, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { Environment, Lightformer, OrbitControls } from '@react-three/drei';
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { LookingAt, type KeyItem } from '../components/LookingAt.tsx';
@@ -54,11 +54,18 @@ function RigDriver({ rig }: { rig: CameraRig }) {
     active.current = true;
   }, [rig, k]);
 
+  useEffect(() => {
+    const orbit = controls as unknown as { addEventListener: (s: string, fn: () => void) => void; removeEventListener: (s: string, fn: () => void) => void } | null;
+    const stop = () => { active.current = false; };
+    orbit?.addEventListener('start', stop);
+    return () => orbit?.removeEventListener('start', stop);
+  }, [controls]);
+
   useFrame((_, dt) => {
     if (!active.current) return;
     const orbit = controls as unknown as { target: THREE.Vector3; update: () => void } | null;
     if (orbit === null) return;
-    const k = 1 - Math.exp(-dt * 3.2);
+    const k = matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 1 - Math.exp(-Math.min(dt, 0.1) * 3.2);
     camera.position.lerp(goalPos.current, k);
     orbit.target.lerp(goalTarget.current, k);
     orbit.update();
@@ -103,6 +110,7 @@ export function Stage3D({
   tall = false,
   overlay,
   fogRange = [10, 26],
+  studio = false,
 }: {
   children: ReactNode;
   caption?: string;
@@ -120,6 +128,8 @@ export function Stage3D({
   overlay?: ReactNode;
   /** Near/far distances of the background fog; widen for table-scale scenes. */
   fogRange?: readonly [number, number];
+  /** Reflection cards for detailed metal and glass apparatus. */
+  studio?: boolean;
 }) {
   const host = useRef<HTMLDivElement>(null);
   // Mount the WebGL context only when the board is within ~a screen of the viewport, and
@@ -153,6 +163,11 @@ export function Stage3D({
             <spotLight position={[6, 10, 4]} intensity={18} angle={0.5} penumbra={1} color="#f2e4c4" />
             <pointLight position={[-4, 2, -3]} intensity={8} color="#5ec8e5" />
             <pointLight position={[3, -1, 5]} intensity={6} color="#c9a0ff" />
+            {studio && <Environment resolution={128}>
+              <Lightformer form="rect" intensity={2.8} position={[0, 10, 0]} rotation={[Math.PI / 2, 0, 0]} scale={[18, 12, 1]} />
+              <Lightformer form="rect" color="#a8cfe9" intensity={2.2} position={[-12, 5, 2]} rotation={[0, Math.PI / 2, 0]} scale={[10, 4, 1]} />
+              <Lightformer form="rect" color="#ffe3be" intensity={1.8} position={[4, 6, -12]} scale={[16, 3, 1]} />
+            </Environment>}
             <Suspense fallback={null}>{children}</Suspense>
             <gridHelper args={[24, 24, '#1b1f24', '#12151a']} position={[0, -2.15, 0]} />
             <OrbitControls
@@ -166,8 +181,8 @@ export function Stage3D({
             />
             {rig ? <RigDriver rig={rig} /> : <StaticFit position={camera} target={[0, 0.15, 0]} />}
             <SizedComposer>
-              <Bloom intensity={0.55} luminanceThreshold={0.18} luminanceSmoothing={0.4} mipmapBlur />
-              <Vignette eskil={false} offset={0.15} darkness={0.65} />
+              <Bloom intensity={studio ? 0.28 : 0.55} luminanceThreshold={studio ? 0.65 : 0.18} luminanceSmoothing={0.4} mipmapBlur />
+              <Vignette eskil={false} offset={0.15} darkness={studio ? 0.35 : 0.65} />
             </SizedComposer>
           </Canvas>
         ) : null}

@@ -1,7 +1,9 @@
-import { useMemo, useRef } from 'react';
+import { createContext, useContext, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
+
+export const ShowCallouts = createContext(true);
 
 export function Callout({
   position,
@@ -18,6 +20,7 @@ export function Callout({
   showWithin?: number;
   small?: boolean;
 }) {
+  const shown = useContext(ShowCallouts);
   const ref = useRef<HTMLDivElement>(null);
   const anchor = useRef<THREE.Group>(null);
   const tmp = useMemo(() => new THREE.Vector3(), []);
@@ -30,6 +33,7 @@ export function Callout({
     const o = 1 - Math.min(1, Math.max(0, (d - showWithin) / (showWithin * 0.25)));
     el.style.opacity = o.toFixed(2);
   });
+  if (!shown) return null;
   return (
     <group ref={anchor} position={position}>
       <Html center {...(fixed ? {} : { distanceFactor: 8 })} style={{ pointerEvents: 'none' }} zIndexRange={[5, 0]}>
